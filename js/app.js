@@ -1,9 +1,9 @@
 /* ==========================================================================
-   TCET Faculty Portfolio System - Core Application Engine (v2.7)
+   TCET Faculty Portfolio System - Core Application Engine (v2.8)
    - Restructured Navigation Tabs (Profile, Teaching, Research & Development, etc.)
    - Dynamic Empty-Section Hiding Logic
    - Clean Hero Section with Single Designation, Correct Department Line,
-     IRINS Name Link, and Separate Badge Links (ORCID, Scopus, Google Scholar, ResearchGate)
+     Simple Text Name (no hyperlink), and Separate Badge Links (ORCID, Scopus, Google Scholar, ResearchGate)
    - Redesigned 70% Faculty / 30% College Footer
    - Fully optimized and compliant with token spending guidelines
    ========================================================================== */
@@ -304,12 +304,8 @@ document.addEventListener('DOMContentLoaded', () => {
           <img src="${f.basicInfo.profilePhotoUrl}" alt="${f.basicInfo.fullName}" class="portfolio-avatar-large">
           <div class="portfolio-hero-info">
             <span class="hero-badge"><i class="fa-solid fa-certificate"></i> ${f.metadata.rankCategory}</span>
-            <!-- Hyperlinked Name to IRINS profile -->
-            <h1>
-              ${f.contact.vidwanUrl ? `
-                <a href="${f.contact.vidwanUrl}" target="_blank" style="color: #FFFFFF; text-decoration: underline;">${f.basicInfo.displayTitle}</a>
-              ` : f.basicInfo.displayTitle}
-            </h1>
+            <!-- Name is simple text, not hyperlinked (Vidwan link target removed from name) -->
+            <h1>${f.basicInfo.displayTitle}</h1>
             <!-- Designation shown once only -->
             <p class="p-designation">${f.basicInfo.designation}</p>
             <!-- Exactly formatted department/college line -->
@@ -372,7 +368,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* Render Sub-Page Content Based on Selected Tab */
   function renderPortfolioTabContent(f, tab) {
-    // Dynamic hide checker to keep code extremely clean and optimized
     const hasData = (val) => val && (Array.isArray(val) ? val.length > 0 : Object.keys(val).length > 0 && val !== '-');
 
     switch (tab) {
@@ -424,7 +419,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             ${showExperience ? `
               <div class="info-card">
-                <h3 style="font-size:1.15rem; color:var(--primary-navy); margin-bottom:1.25rem;"><i class="fa-solid fa-briefcase"></i> Work Experience</h3>
+                <!-- Head styled as just "Experience" -->
+                <h3 style="font-size:1.15rem; color:var(--primary-navy); margin-bottom:1.25rem;"><i class="fa-solid fa-briefcase"></i> Experience</h3>
                 <div style="display:flex; flex-direction:column; gap:0.75rem;">
                   ${f.experience.teaching && f.experience.teaching !== '-' ? `<p><strong>Total Teaching Experience:</strong> ${f.experience.teaching}</p>` : ''}
                   ${f.experience.industry && f.experience.industry !== '-' ? `<p><strong>Industry Experience:</strong> ${f.experience.industry}</p>` : ''}
@@ -814,7 +810,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             <div class="footer-links-column">
               <h4>System Details</h4>
-              <p style="font-size:0.825rem; color:#94A3B8;">Standardized Portfolio Architecture v2.7</p>
+              <p style="font-size:0.825rem; color:#94A3B8;">Standardized Portfolio Architecture v2.8</p>
               <p style="font-size:0.825rem; color:#94A3B8; margin-top:0.3rem;">Integrated 6-Tab Multi-Page System.</p>
             </div>
           </div>
