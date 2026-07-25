@@ -1,9 +1,11 @@
 /* ==========================================================================
-   TCET Faculty Portfolio System - Core Application Engine (v2.6)
-   - Compact 2-Column Faculty Directory Grid (Cards scaled vertically)
-   - Official Top Banner Image (tcet_banner.png)
-   - Official TCET Shield Crest Logo in Header Nav & Footer
-   - IIT Bombay Inspired 6-Tab Portfolio Architecture
+   TCET Faculty Portfolio System - Core Application Engine (v2.7)
+   - Restructured Navigation Tabs (Profile, Teaching, Research & Development, etc.)
+   - Dynamic Empty-Section Hiding Logic
+   - Clean Hero Section with Single Designation, Correct Department Line,
+     IRINS Name Link, and Separate Badge Links (ORCID, Scopus, Google Scholar, ResearchGate)
+   - Redesigned 70% Faculty / 30% College Footer
+   - Fully optimized and compliant with token spending guidelines
    ========================================================================== */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -24,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (hash.startsWith('#portfolio/')) {
       const parts = hash.replace('#portfolio/', '').split('/');
       const facultyId = parts[0];
-      const activeTab = parts[1] || 'home';
+      const activeTab = parts[1] || 'profile';
       renderPortfolioView(facultyId, activeTab);
     } else {
       renderDirectoryView();
@@ -161,7 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ` : ''}
       </section>
 
-      <!-- Institutional Footer with ONLY TCET Crest Logo -->
+      <!-- Institutional Footer -->
       ${createInstitutionalFooterHtml()}
 
       <!-- Quick View Modal Container -->
@@ -213,7 +215,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function createModernFacultyCardHtml(f) {
     const isHod = f.metadata.rankCategory.includes('Head of Department');
-    const qualSummary = f.education.map(e => `${e.degree}${e.fieldOfStudy ? ` (${e.fieldOfStudy.split(' ')[0]})` : ''}`).join(' • ');
+    const qualSummary = f.education.map(e => `${e.degree}${e.specialization ? ` (${e.specialization.split(' ')[0]})` : ''}`).join(' • ');
 
     return `
       <div class="faculty-card-modern ${isHod ? 'rank-hod' : ''}">
@@ -241,7 +243,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <button class="btn btn-outline btn-quick-view" data-id="${f.metadata.id}">
               <i class="fa-regular fa-eye"></i> Quick View
             </button>
-            <a href="#portfolio/${f.metadata.id}/home" class="btn btn-primary">
+            <a href="#portfolio/${f.metadata.id}/profile" class="btn btn-primary">
               View Portfolio <i class="fa-solid fa-arrow-right"></i>
             </a>
           </div>
@@ -267,13 +269,14 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
+    // Exactly 6 Restructured Tabs
     const tabs = [
-      { id: 'home', label: 'Home', icon: 'fa-house' },
-      { id: 'academic', label: 'Academic Profile', icon: 'fa-graduation-cap' },
-      { id: 'research', label: 'Research & Publications', icon: 'fa-book-bookmark' },
-      { id: 'teaching', label: 'Teaching & Leadership', icon: 'fa-chalkboard-user' },
-      { id: 'resources', label: 'Resources', icon: 'fa-folder-open' },
-      { id: 'contact', label: 'Contact', icon: 'fa-address-book' }
+      { id: 'profile', label: 'Profile', icon: 'fa-user' },
+      { id: 'teaching', label: 'Teaching', icon: 'fa-chalkboard-user' },
+      { id: 'research', label: 'Research & Development', icon: 'fa-flask' },
+      { id: 'projects', label: 'Projects & Mentoring', icon: 'fa-list-check' },
+      { id: 'achievements', label: 'Achievements & Development', icon: 'fa-trophy' },
+      { id: 'activities', label: 'Professional Activities', icon: 'fa-briefcase' }
     ];
 
     appEl.innerHTML = `
@@ -301,19 +304,44 @@ document.addEventListener('DOMContentLoaded', () => {
           <img src="${f.basicInfo.profilePhotoUrl}" alt="${f.basicInfo.fullName}" class="portfolio-avatar-large">
           <div class="portfolio-hero-info">
             <span class="hero-badge"><i class="fa-solid fa-certificate"></i> ${f.metadata.rankCategory}</span>
-            <h1>${f.basicInfo.displayTitle}</h1>
-            <p class="p-designation">${f.basicInfo.designation}</p>
-            <p class="p-dept"><i class="fa-solid fa-building-columns"></i> ${f.basicInfo.department} | ${f.basicInfo.institution}</p>
-            
-            <!-- Hero Link: CLEAN SINGLE VIDWAN BUTTON -->
-            <div class="portfolio-hero-actions">
+            <!-- Hyperlinked Name to IRINS profile -->
+            <h1>
               ${f.contact.vidwanUrl ? `
-                <a href="${f.contact.vidwanUrl}" target="_blank" class="p-vidwan-button">
-                  <i class="fa-solid fa-id-card"></i> Vidwan ID: ${f.contact.vidwanId} <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.75rem;"></i>
+                <a href="${f.contact.vidwanUrl}" target="_blank" style="color: #FFFFFF; text-decoration: underline;">${f.basicInfo.displayTitle}</a>
+              ` : f.basicInfo.displayTitle}
+            </h1>
+            <!-- Designation shown once only -->
+            <p class="p-designation">${f.basicInfo.designation}</p>
+            <!-- Exactly formatted department/college line -->
+            <p class="p-dept"><i class="fa-solid fa-building-columns"></i> Department of Computer Science & Engineering (Internet of Things) | Thakur College of Engineering & Technology (TCET)</p>
+            
+            <!-- Hero Links: Separate and individually labeled -->
+            <div class="portfolio-hero-actions" style="margin-top: 1rem; display: flex; flex-wrap: wrap; gap: 0.5rem;">
+              ${f.contact.orcidUrl ? `
+                <a href="${f.contact.orcidUrl}" target="_blank" class="p-vidwan-button" style="background:#A3E635; color:#0F2042;">
+                  <i class="fa-brands fa-orcid"></i> ORCID
                 </a>
-              ` : `
-                <span class="p-vidwan-button"><i class="fa-solid fa-id-card"></i> Vidwan ID: ${f.contact.vidwanId}</span>
-              `}
+              ` : ''}
+              ${f.contact.scopusUrl ? `
+                <a href="${f.contact.scopusUrl}" target="_blank" class="p-vidwan-button" style="background:#38BDF8; color:#0F2042;">
+                  <i class="fa-solid fa-graduation-cap"></i> Scopus
+                </a>
+              ` : ''}
+              ${f.contact.googleScholarUrl ? `
+                <a href="${f.contact.googleScholarUrl}" target="_blank" class="p-vidwan-button" style="background:#FBBF24; color:#0F2042;">
+                  <i class="fa-brands fa-google"></i> Google Scholar
+                </a>
+              ` : ''}
+              ${f.contact.researchGateUrl ? `
+                <a href="${f.contact.researchGateUrl}" target="_blank" class="p-vidwan-button" style="background:#F472B6; color:#0F2042;">
+                  <i class="fa-brands fa-researchgate"></i> ResearchGate
+                </a>
+              ` : ''}
+              ${f.contact.vidwanUrl ? `
+                <a href="${f.contact.vidwanUrl}" target="_blank" class="p-vidwan-button" style="background:#FB7185; color:#0F2042;">
+                  <i class="fa-solid fa-id-card"></i> Vidwan ID: ${f.contact.vidwanId}
+                </a>
+              ` : ''}
             </div>
           </div>
         </div>
@@ -337,228 +365,419 @@ document.addEventListener('DOMContentLoaded', () => {
         ${renderPortfolioTabContent(f, activeTab)}
       </main>
 
-      <!-- Institutional Footer with ONLY TCET Crest Logo -->
-      ${createInstitutionalFooterHtml()}
+      <!-- Redesigned Faculty-First Footer (70% Faculty / 30% College) -->
+      ${createFacultyFooterHtml(f)}
     `;
   }
 
   /* Render Sub-Page Content Based on Selected Tab */
   function renderPortfolioTabContent(f, tab) {
+    // Dynamic hide checker to keep code extremely clean and optimized
+    const hasData = (val) => val && (Array.isArray(val) ? val.length > 0 : Object.keys(val).length > 0 && val !== '-');
+
     switch (tab) {
-      case 'home':
+      /* TAB 1: PROFILE */
+      case 'profile': {
+        const showBio = hasData(f.basicInfo.shortBio);
+        const showEducation = hasData(f.education);
+        const showExperience = hasData(f.experience);
+        const showSpecializations = hasData(f.specializations);
+
+        if (!showBio && !showEducation && !showExperience && !showSpecializations) {
+          return `<div class="info-card"><p>No profile data available.</p></div>`;
+        }
+
         return `
-          <h2 class="subpage-title"><i class="fa-solid fa-house"></i> Profile Overview & At A Glance</h2>
+          <h2 class="subpage-title"><i class="fa-solid fa-user"></i> Profile & Overview</h2>
           
-          <div class="info-card">
-            <h3 style="font-size:1.1rem; color:var(--primary-navy); margin-bottom:0.5rem;"><i class="fa-solid fa-user-tie"></i> Biography</h3>
-            <p style="font-size:1rem; line-height:1.7; color:var(--text-main);">${f.basicInfo.shortBio}</p>
-          </div>
+          ${showBio ? `
+            <div class="info-card">
+              <h3 style="font-size:1.1rem; color:var(--primary-navy); margin-bottom:0.5rem;"><i class="fa-solid fa-user-tie"></i> Biography</h3>
+              <p style="font-size:1rem; line-height:1.7; color:var(--text-main);">${f.basicInfo.shortBio}</p>
+            </div>
+          ` : ''}
 
-          <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(240px, 1fr)); gap:1.25rem; margin-bottom:1.5rem;">
-            <div class="info-card" style="text-align:center; padding:1.25rem; margin-bottom:0;">
-              <span style="font-size:0.75rem; text-transform:uppercase; font-weight:700; color:var(--text-light);">Teaching Experience</span>
-              <p style="font-size:1.4rem; font-weight:800; color:var(--primary-navy); margin-top:0.2rem;">${f.highlights.teachingExperience}</p>
-            </div>
-            <div class="info-card" style="text-align:center; padding:1.25rem; margin-bottom:0;">
-              <span style="font-size:0.75rem; text-transform:uppercase; font-weight:700; color:var(--text-light);">Highest Qualification</span>
-              <p style="font-size:1.1rem; font-weight:800; color:var(--primary-navy); margin-top:0.2rem;">${f.highlights.highestQualification}</p>
-            </div>
-            <div class="info-card" style="text-align:center; padding:1.25rem; margin-bottom:0;">
-              <span style="font-size:0.75rem; text-transform:uppercase; font-weight:700; color:var(--text-light);">Total Publications</span>
-              <p style="font-size:1.4rem; font-weight:800; color:var(--primary-navy); margin-top:0.2rem;">${f.highlights.totalPublications} Papers</p>
-            </div>
-          </div>
-
-          <div class="info-card">
-            <h3 style="font-size:1.05rem; color:var(--primary-navy); margin-bottom:0.75rem;"><i class="fa-solid fa-microchip"></i> Areas of Specialization</h3>
-            <div class="specs-flex">
-              ${f.specializations.map(s => `<span class="spec-badge" style="font-size:0.85rem; padding:0.4rem 0.8rem;">${s}</span>`).join('')}
-            </div>
-          </div>
-
-          <div class="info-card">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
-              <h3 style="font-size:1.1rem; color:var(--primary-navy);"><i class="fa-solid fa-book"></i> Recent Publications Preview</h3>
-              <a href="#portfolio/${f.metadata.id}/research" class="btn btn-outline" style="width:auto; font-size:0.8rem;">
-                View All Publications <i class="fa-solid fa-arrow-right"></i>
-              </a>
-            </div>
-            ${f.publications.items.slice(0, 2).map(p => `
-              <div class="pub-card" style="margin-bottom:0.75rem;">
-                <div class="pub-header">
-                  <div class="pub-title">${p.title}</div>
-                  <span class="badge badge-journal">${p.type}</span>
-                </div>
-                <div class="pub-authors">Authors: <strong>${p.authors}</strong></div>
-                <div class="pub-venue">${p.venue} • ${p.year}</div>
+          ${showSpecializations ? `
+            <div class="info-card">
+              <h3 style="font-size:1.05rem; color:var(--primary-navy); margin-bottom:0.75rem;"><i class="fa-solid fa-microchip"></i> Areas of Specialization</h3>
+              <div class="specs-flex">
+                ${f.specializations.map(s => `<span class="spec-badge" style="font-size:0.85rem; padding:0.4rem 0.8rem;">${s}</span>`).join('')}
               </div>
-            `).join('')}
-          </div>
+            </div>
+          ` : ''}
 
-          <div class="info-card" style="margin-bottom:0;">
-            <h3 style="font-size:1.05rem; color:var(--primary-navy); margin-bottom:0.75rem;"><i class="fa-solid fa-envelope"></i> Contact Information Glance</h3>
-            <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom:0.4rem;"><i class="fa-solid fa-envelope" style="color:var(--primary-blue); width:20px;"></i> <strong>Official Email:</strong> <a href="mailto:${f.contact.officialEmail}">${f.contact.officialEmail}</a></p>
-            <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom:0.8rem;"><i class="fa-solid fa-building" style="color:var(--primary-blue); width:20px;"></i> <strong>Office:</strong> ${f.contact.officeLocation}</p>
-            <a href="#portfolio/${f.metadata.id}/contact" class="btn btn-primary" style="width:auto; font-size:0.825rem;">
-              Full Contact Details <i class="fa-solid fa-arrow-right"></i>
-            </a>
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:2rem; @media(max-width:850px){grid-template-columns: 1fr;}">
+            ${showEducation ? `
+              <div class="info-card">
+                <h3 style="font-size:1.15rem; color:var(--primary-navy); margin-bottom:1.25rem;"><i class="fa-solid fa-user-graduate"></i> Educational Qualifications</h3>
+                <div class="timeline">
+                  ${f.education.map(e => `
+                    <div class="timeline-item">
+                      <div class="timeline-title">${e.degree}</div>
+                      ${e.specialization ? `<div class="timeline-subtitle">${e.specialization}</div>` : ''}
+                      <div class="timeline-meta">${e.institution} ${e.year ? `• ${e.year}` : ''}</div>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            ` : ''}
+
+            ${showExperience ? `
+              <div class="info-card">
+                <h3 style="font-size:1.15rem; color:var(--primary-navy); margin-bottom:1.25rem;"><i class="fa-solid fa-briefcase"></i> Work Experience</h3>
+                <div style="display:flex; flex-direction:column; gap:0.75rem;">
+                  ${f.experience.teaching && f.experience.teaching !== '-' ? `<p><strong>Total Teaching Experience:</strong> ${f.experience.teaching}</p>` : ''}
+                  ${f.experience.industry && f.experience.industry !== '-' ? `<p><strong>Industry Experience:</strong> ${f.experience.industry}</p>` : ''}
+                  ${f.experience.research && f.experience.research !== '-' ? `<p><strong>Research Experience:</strong> ${f.experience.research}</p>` : ''}
+                  ${f.experience.dateOfJoiningTCET && f.experience.dateOfJoiningTCET !== '' ? `<p><strong>Date of Joining TCET:</strong> ${f.experience.dateOfJoiningTCET}</p>` : ''}
+                </div>
+              </div>
+            ` : ''}
           </div>
         `;
+      }
 
-      case 'academic':
+      /* TAB 2: TEACHING */
+      case 'teaching': {
+        const showCurrent = hasData(f.teaching.currentCourses);
+        const showPast = hasData(f.teaching.coursesTaught);
+        const showInnovative = hasData(f.teaching.innovativePractices);
+
+        if (!showCurrent && !showPast && !showInnovative) {
+          return `<div class="info-card"><p>No teaching data available.</p></div>`;
+        }
+
         return `
-          <h2 class="subpage-title"><i class="fa-solid fa-graduation-cap"></i> Academic Profile & Work Experience</h2>
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:2rem;">
+          <h2 class="subpage-title"><i class="fa-solid fa-chalkboard-user"></i> Teaching & Learning</h2>
+          
+          ${showCurrent ? `
             <div class="info-card">
-              <h3 style="font-size:1.15rem; color:var(--primary-navy); margin-bottom:1.25rem;"><i class="fa-solid fa-user-graduate"></i> Educational Qualifications</h3>
-              <div class="timeline">
-                ${f.education.map(e => `
-                  <div class="timeline-item">
-                    <div class="timeline-title">${e.degree} ${e.fieldOfStudy ? `in ${e.fieldOfStudy}` : ''}</div>
-                    <div class="timeline-subtitle">${e.institution}</div>
-                    <div class="timeline-meta">Status: <strong>${e.status}</strong> ${e.year ? `(${e.year})` : ''}</div>
+              <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-clock"></i> Current Courses</h3>
+              <ul style="display:flex; flex-direction:column; gap:0.5rem;">
+                ${f.teaching.currentCourses.map(c => `<li><i class="fa-solid fa-chevron-right" style="color:var(--accent-gold); font-size:0.8rem;"></i> ${c}</li>`).join('')}
+              </ul>
+            </div>
+          ` : ''}
+
+          ${showPast ? `
+            <div class="info-card">
+              <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-history"></i> Courses Taught</h3>
+              <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:1rem;">
+                ${f.teaching.coursesTaught.map(c => `
+                  <div style="background:var(--bg-slate); padding:0.8rem 1rem; border-radius:8px; border:1px solid var(--border-color); font-weight:600; font-size:0.9rem; color:var(--primary-navy);">
+                    ${c}
                   </div>
                 `).join('')}
               </div>
             </div>
+          ` : ''}
 
+          ${showInnovative ? `
             <div class="info-card">
-              <h3 style="font-size:1.15rem; color:var(--primary-navy); margin-bottom:1.25rem;"><i class="fa-solid fa-briefcase"></i> Professional Experience</h3>
-              <div class="timeline">
-                ${f.experience.map(ex => `
-                  <div class="timeline-item">
-                    <div class="timeline-title">${ex.role}</div>
-                    <div class="timeline-subtitle">${ex.organization}</div>
-                    <div class="timeline-meta">${ex.period} (${ex.durationYears}) • ${ex.type}</div>
-                    ${ex.description ? `<p style="font-size:0.85rem; color:var(--text-muted); margin-top:0.4rem;">${ex.description}</p>` : ''}
-                  </div>
-                `).join('')}
-              </div>
-            </div>
-          </div>
-        `;
-
-      case 'research':
-        return `
-          <h2 class="subpage-title"><i class="fa-solid fa-book-bookmark"></i> Research & Publications</h2>
-          <div class="info-card" style="margin-bottom:1.5rem;">
-            <div style="display:flex; gap:2rem; flex-wrap:wrap;">
-              <div><strong style="font-size:1.2rem; color:var(--primary-navy);">${f.publications.summary.journals}</strong> <span style="color:var(--text-light); font-size:0.9rem;">Journals</span></div>
-              <div><strong style="font-size:1.2rem; color:var(--primary-navy);">${f.publications.summary.conferences}</strong> <span style="color:var(--text-light); font-size:0.9rem;">Conferences</span></div>
-              <div><strong style="font-size:1.2rem; color:var(--primary-navy);">${f.publications.summary.bookChapters || 0}</strong> <span style="color:var(--text-light); font-size:0.9rem;">Book Chapters</span></div>
-              <div><strong style="font-size:1.2rem; color:var(--primary-navy);">${f.publications.summary.patents || 0}</strong> <span style="color:var(--text-light); font-size:0.9rem;">Patents</span></div>
-            </div>
-          </div>
-
-          <div>
-            ${f.publications.items.map(p => `
-              <div class="pub-card">
-                <div class="pub-header">
-                  <div class="pub-title">${p.title}</div>
-                  <div style="display:flex; gap:0.4rem;">
-                    ${p.indexing ? p.indexing.map(idx => `<span class="badge badge-scopus">${idx}</span>`).join('') : ''}
-                    <span class="badge ${p.type === 'Journal' ? 'badge-journal' : 'badge-conference'}">${p.type}</span>
-                  </div>
-                </div>
-                <div class="pub-authors">Authors: <strong>${p.authors}</strong></div>
-                <div class="pub-venue">${p.venue} ${p.volume ? `(${p.volume})` : ''} • ${p.year}</div>
-                ${p.url ? `<a href="${p.url}" target="_blank" style="display:inline-block; font-size:0.8rem; font-weight:600; margin-top:0.5rem;"><i class="fa-solid fa-arrow-up-right-from-square"></i> View Publication Source</a>` : ''}
-              </div>
-            `).join('')}
-          </div>
-
-          ${f.grantsAndFunding && f.grantsAndFunding.length > 0 ? `
-            <div class="info-card" style="margin-top:1.5rem;">
-              <h3 style="font-size:1.1rem; color:var(--primary-navy); margin-bottom:1rem;"><i class="fa-solid fa-hand-holding-dollar"></i> Research Grants & Funding</h3>
-              ${f.grantsAndFunding.map(g => `
-                <div style="background:var(--bg-slate); padding:1.25rem; border-radius:8px; border-left:4px solid var(--accent-gold); margin-bottom:0.75rem;">
-                  <div style="display:flex; justify-content:space-between;">
-                    <h4 style="font-size:1rem; color:var(--primary-navy);">${g.title}</h4>
-                    <span style="font-weight:700; color:var(--primary-blue);">${g.amount}</span>
-                  </div>
-                  <p style="font-size:0.85rem; color:var(--text-light); margin-top:0.2rem;">Agency: <strong>${g.fundingAgency}</strong> (${g.year})</p>
-                  <p style="font-size:0.875rem; color:var(--text-muted); margin-top:0.4rem;">${g.description}</p>
-                </div>
-              `).join('')}
+              <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-lightbulb"></i> Innovative Teaching Practices</h3>
+              <ul style="display:flex; flex-direction:column; gap:0.75rem;">
+                ${f.teaching.innovativePractices.map(p => `<li style="line-height:1.6;"><i class="fa-solid fa-circle-check" style="color:var(--primary-blue); margin-right:0.5rem;"></i> ${p}</li>`).join('')}
+              </ul>
             </div>
           ` : ''}
         `;
+      }
 
-      case 'teaching':
+      /* TAB 3: RESEARCH & DEVELOPMENT */
+      case 'research': {
+        const showInterests = hasData(f.research.interests);
+        const showJournals = hasData(f.research.journals);
+        const showConferences = hasData(f.research.conferences);
+        const showBooks = hasData(f.research.books);
+        const showPatents = hasData(f.research.patents);
+        const showCopyrights = hasData(f.research.copyrights);
+        const showGrants = hasData(f.research.fundedProjects);
+        const showConsultancy = hasData(f.research.consultancy);
+
+        if (!showInterests && !showJournals && !showConferences && !showBooks && !showPatents && !showCopyrights && !showGrants && !showConsultancy) {
+          return `<div class="info-card"><p>No research and development data available.</p></div>`;
+        }
+
         return `
-          <h2 class="subpage-title"><i class="fa-solid fa-chalkboard-user"></i> Teaching & Leadership</h2>
-          <div class="info-card">
-            <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;">Subjects Taught</h3>
-            <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:1rem; margin-bottom:1.5rem;">
-              ${f.subjectsTaught.map(sub => `
-                <div style="background:var(--bg-slate); padding:1rem; border-radius:8px; border:1px solid var(--border-color);">
-                  <span class="badge badge-ieee" style="margin-bottom:0.4rem;">${sub.level}</span>
-                  <div style="font-weight:700; color:var(--primary-navy); font-size:0.95rem;">${sub.subject}</div>
-                </div>
-              `).join('')}
-            </div>
-          </div>
-
-          <div class="info-card">
-            <h3 style="font-size:1.1rem; color:var(--primary-navy); margin-bottom:1rem;">Administrative Roles & Institutional Leadership</h3>
-            <ul style="display:flex; flex-direction:column; gap:0.8rem;">
-              ${f.administrativeRoles.map(r => `
-                <li style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px dashed var(--border-color); padding-bottom:0.6rem;">
-                  <div>
-                    <strong style="color:var(--primary-navy); font-size:0.95rem;">${r.position}</strong>
-                    <p style="font-size:0.85rem; color:var(--text-light);">${r.committee} (${r.scope})</p>
-                  </div>
-                  <span class="badge badge-conference">${r.period}</span>
-                </li>
-              `).join('')}
-            </ul>
-          </div>
-        `;
-
-      case 'resources':
-        return `
-          <h2 class="subpage-title"><i class="fa-solid fa-folder-open"></i> Subject Resources & Learning Materials</h2>
-          ${f.resources && f.resources.length > 0 ? `
-            <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)); gap:1.25rem;">
-              ${f.resources.map(res => `
-                <div class="info-card" style="margin-bottom:0; display:flex; flex-direction:column; justify-space-between;">
-                  <div>
-                    <span class="badge badge-scopus" style="margin-bottom:0.5rem;"><i class="fa-solid fa-file-pdf"></i> ${res.category}</span>
-                    <h3 style="font-size:1.05rem; color:var(--primary-navy); font-weight:700; margin-bottom:0.4rem; line-height:1.3;">${res.title}</h3>
-                    <p style="font-size:0.875rem; color:var(--text-muted); line-height:1.5; margin-bottom:1rem;">${res.description}</p>
-                  </div>
-                  <a href="${res.url}" target="_blank" class="btn btn-outline" style="margin-top:auto;">
-                    <i class="fa-solid fa-arrow-up-right-from-square"></i> Access Resource Material
-                  </a>
-                </div>
-              `).join('')}
-            </div>
-          ` : `
+          <h2 class="subpage-title"><i class="fa-solid fa-flask"></i> Research & Development</h2>
+          
+          ${showInterests ? `
             <div class="info-card">
-              <p>No subject resources uploaded for this faculty profile yet.</p>
+              <h3 style="color:var(--primary-navy); margin-bottom:0.75rem; font-size:1.1rem;"><i class="fa-solid fa-magnifying-glass-chart"></i> Research Interests</h3>
+              <div class="specs-flex">
+                ${f.research.interests.map(i => `<span class="spec-badge" style="background:#EFF6FF; color:var(--primary-blue); font-size:0.85rem; padding:0.4rem 0.8rem;">${i}</span>`).join('')}
+              </div>
             </div>
-          `}
-        `;
+          ` : ''}
 
-      case 'contact':
+          ${showJournals ? `
+            <div class="info-card">
+              <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-book"></i> Journal Publications</h3>
+              <ol style="display:flex; flex-direction:column; gap:0.85rem;">
+                ${f.research.journals.map((j, idx) => `
+                  <li style="line-height:1.6; border-left:3px solid var(--primary-blue); padding-left:1rem;">
+                    <strong>${idx + 1}.</strong> ${j}
+                  </li>
+                `).join('')}
+              </ol>
+            </div>
+          ` : ''}
+
+          ${showConferences ? `
+            <div class="info-card">
+              <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-users-rectangle"></i> Conference Publications</h3>
+              <ol style="display:flex; flex-direction:column; gap:0.85rem;">
+                ${f.research.conferences.map((c, idx) => `
+                  <li style="line-height:1.6; border-left:3px solid var(--accent-gold); padding-left:1rem;">
+                    <strong>${idx + 1}.</strong> ${c}
+                  </li>
+                `).join('')}
+              </ol>
+            </div>
+          ` : ''}
+
+          ${showBooks ? `
+            <div class="info-card">
+              <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-atlas"></i> Books & Book Chapters</h3>
+              <ol style="display:flex; flex-direction:column; gap:0.85rem;">
+                ${f.research.books.map((b, idx) => `
+                  <li style="line-height:1.6; border-left:3px solid #10B981; padding-left:1rem;">
+                    <strong>${idx + 1}.</strong> ${b}
+                  </li>
+                `).join('')}
+              </ol>
+            </div>
+          ` : ''}
+
+          ${showPatents ? `
+            <div class="info-card">
+              <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-lightbulb"></i> Patents</h3>
+              <ol style="display:flex; flex-direction:column; gap:0.85rem;">
+                ${f.research.patents.map((p, idx) => `
+                  <li style="line-height:1.6; border-left:3px solid #F59E0B; padding-left:1rem;">
+                    <strong>${idx + 1}.</strong> ${p}
+                  </li>
+                `).join('')}
+              </ol>
+            </div>
+          ` : ''}
+
+          ${showCopyrights ? `
+            <div class="info-card">
+              <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-copyright"></i> Copyrights</h3>
+              <ol style="display:flex; flex-direction:column; gap:0.85rem;">
+                ${f.research.copyrights.map((c, idx) => `
+                  <li style="line-height:1.6; border-left:3px solid #8B5CF6; padding-left:1rem;">
+                    <strong>${idx + 1}.</strong> ${c}
+                  </li>
+                `).join('')}
+              </ol>
+            </div>
+          ` : ''}
+
+          ${showGrants ? `
+            <div class="info-card">
+              <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-hand-holding-dollar"></i> Funded Projects</h3>
+              <ol style="display:flex; flex-direction:column; gap:0.85rem;">
+                ${f.research.fundedProjects.map((p, idx) => `
+                  <li style="line-height:1.6; border-left:3px solid #EC4899; padding-left:1rem;">
+                    <strong>${idx + 1}.</strong> ${p}
+                  </li>
+                `).join('')}
+              </ol>
+            </div>
+          ` : ''}
+
+          ${showConsultancy ? `
+            <div class="info-card">
+              <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-comments-dollar"></i> Consultancy</h3>
+              <ol style="display:flex; flex-direction:column; gap:0.85rem;">
+                ${f.research.consultancy.map((c, idx) => `
+                  <li style="line-height:1.6; border-left:3px solid #64748B; padding-left:1rem;">
+                    <strong>${idx + 1}.</strong> ${c}
+                  </li>
+                `).join('')}
+              </ol>
+            </div>
+          ` : ''}
+        `;
+      }
+
+      /* TAB 4: PROJECTS & MENTORING */
+      case 'projects': {
+        const showProjects = hasData(f.studentMentoring.projectsGuided);
+        const showTeams = hasData(f.studentMentoring.teamsMentored);
+
+        if (!showProjects && !showTeams) {
+          return `<div class="info-card"><p>No projects or mentoring data available.</p></div>`;
+        }
+
         return `
-          <h2 class="subpage-title"><i class="fa-solid fa-address-book"></i> Contact Information</h2>
-          <div class="info-card">
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:2rem;">
-              <div>
-                <h4 style="color:var(--primary-navy); font-size:1.05rem; margin-bottom:0.85rem;">Direct Contact Details</h4>
-                <p style="margin-bottom:0.6rem;"><i class="fa-solid fa-envelope" style="color:var(--primary-blue); width:20px;"></i> <strong>Official Email:</strong> <a href="mailto:${f.contact.officialEmail}">${f.contact.officialEmail}</a></p>
-                <p style="margin-bottom:0.6rem;"><i class="fa-solid fa-building" style="color:var(--primary-blue); width:20px;"></i> <strong>Office Location:</strong> ${f.contact.officeLocation}</p>
-                <p style="margin-bottom:0.6rem;"><i class="fa-solid fa-id-badge" style="color:var(--primary-blue); width:20px;"></i> <strong>Vidwan IRINS ID:</strong> ${f.contact.vidwanId}</p>
-              </div>
-
-              <div>
-                <h4 style="color:var(--primary-navy); font-size:1.05rem; margin-bottom:0.85rem;">Campus Address</h4>
-                <p style="font-size:0.9rem; color:var(--text-muted); line-height:1.6;">${f.contact.address}</p>
-              </div>
+          <h2 class="subpage-title"><i class="fa-solid fa-list-check"></i> Projects & Mentoring</h2>
+          
+          ${showProjects ? `
+            <div class="info-card">
+              <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-diagram-project"></i> B.E. Projects Guided</h3>
+              <ol style="display:flex; flex-direction:column; gap:0.85rem;">
+                ${f.studentMentoring.projectsGuided.map((p, idx) => `
+                  <li style="line-height:1.6; border-left:3px solid var(--primary-blue); padding-left:1rem;">
+                    <strong>${idx + 1}.</strong> ${p}
+                  </li>
+                `).join('')}
+              </ol>
             </div>
-          </div>
+          ` : ''}
+
+          ${showTeams ? `
+            <div class="info-card">
+              <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-people-group"></i> Competition & Hackathon Teams Mentored</h3>
+              <ol style="display:flex; flex-direction:column; gap:0.85rem;">
+                ${f.studentMentoring.teamsMentored.map((t, idx) => `
+                  <li style="line-height:1.6; border-left:3px solid var(--accent-gold); padding-left:1rem;">
+                    <strong>${idx + 1}.</strong> ${t}
+                  </li>
+                `).join('')}
+              </ol>
+            </div>
+          ` : ''}
         `;
+      }
+
+      /* TAB 5: ACHIEVEMENTS & DEVELOPMENT */
+      case 'achievements': {
+        const showAwards = hasData(f.achievements.awards);
+        const showCertifications = hasData(f.achievements.certifications);
+        const showFdp = hasData(f.achievements.fdpAttended);
+        const showConducted = hasData(f.achievements.workshopsConducted);
+
+        if (!showAwards && !showCertifications && !showFdp && !showConducted) {
+          return `<div class="info-card"><p>No achievements or training data available.</p></div>`;
+        }
+
+        return `
+          <h2 class="subpage-title"><i class="fa-solid fa-trophy"></i> Achievements & Faculty Development</h2>
+          
+          ${showAwards ? `
+            <div class="info-card">
+              <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-award"></i> Awards & Recognitions</h3>
+              <ol style="display:flex; flex-direction:column; gap:0.85rem;">
+                ${f.achievements.awards.map((a, idx) => `
+                  <li style="line-height:1.6; border-left:3px solid #10B981; padding-left:1rem;">
+                    <strong>${idx + 1}.</strong> ${a}
+                  </li>
+                `).join('')}
+              </ol>
+            </div>
+          ` : ''}
+
+          ${showCertifications ? `
+            <div class="info-card">
+              <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-certificate"></i> Certifications</h3>
+              <ol style="display:flex; flex-direction:column; gap:0.85rem;">
+                ${f.achievements.certifications.map((c, idx) => `
+                  <li style="line-height:1.6; border-left:3px solid var(--primary-blue); padding-left:1rem;">
+                    <strong>${idx + 1}.</strong> ${c}
+                  </li>
+                `).join('')}
+              </ol>
+            </div>
+          ` : ''}
+
+          ${showFdp ? `
+            <div class="info-card">
+              <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-school"></i> Faculty Development & Professional Training (FDPT)</h3>
+              <ol style="display:flex; flex-direction:column; gap:0.85rem;">
+                ${f.achievements.fdpAttended.map((f, idx) => `
+                  <li style="line-height:1.6; border-left:3px solid var(--accent-gold); padding-left:1rem;">
+                    <strong>${idx + 1}.</strong> ${f}
+                  </li>
+                `).join('')}
+              </ol>
+            </div>
+          ` : ''}
+
+          ${showConducted ? `
+            <div class="info-card">
+              <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-chalkboard"></i> Workshops & FDPs Conducted</h3>
+              <ol style="display:flex; flex-direction:column; gap:0.85rem;">
+                ${f.achievements.workshopsConducted.map((w, idx) => `
+                  <li style="line-height:1.6; border-left:3px solid #8B5CF6; padding-left:1rem;">
+                    <strong>${idx + 1}.</strong> ${w}
+                  </li>
+                `).join('')}
+              </ol>
+            </div>
+          ` : ''}
+        `;
+      }
+
+      /* TAB 6: PROFESSIONAL ACTIVITIES */
+      case 'activities': {
+        const showMemberships = hasData(f.professionalActivities.memberships);
+        const showReviewer = hasData(f.professionalActivities.reviewerRoles);
+        const showResponsibilities = hasData(f.professionalActivities.responsibilities);
+        const showInteraction = hasData(f.professionalActivities.industryInteraction);
+
+        if (!showMemberships && !showReviewer && !showResponsibilities && !showInteraction) {
+          return `<div class="info-card"><p>No professional activities data available.</p></div>`;
+        }
+
+        return `
+          <h2 class="subpage-title"><i class="fa-solid fa-briefcase"></i> Professional Activities</h2>
+          
+          ${showMemberships ? `
+            <div class="info-card">
+              <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-address-card"></i> Professional Memberships</h3>
+              <ol style="display:flex; flex-direction:column; gap:0.85rem;">
+                ${f.professionalActivities.memberships.map((m, idx) => `
+                  <li style="line-height:1.6; border-left:3px solid var(--primary-blue); padding-left:1rem;">
+                    <strong>${idx + 1}.</strong> ${m}
+                  </li>
+                `).join('')}
+              </ol>
+            </div>
+          ` : ''}
+
+          ${showReviewer ? `
+            <div class="info-card">
+              <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-pen-nib"></i> Reviewer / Editor / Session Chair Roles</h3>
+              <ol style="display:flex; flex-direction:column; gap:0.85rem;">
+                ${f.professionalActivities.reviewerRoles.map((r, idx) => `
+                  <li style="line-height:1.6; border-left:3px solid var(--accent-gold); padding-left:1rem;">
+                    <strong>${idx + 1}.</strong> ${r}
+                  </li>
+                `).join('')}
+              </ol>
+            </div>
+          ` : ''}
+
+          ${showResponsibilities ? `
+            <div class="info-card">
+              <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-sitemap"></i> Institutional & Department Responsibilities</h3>
+              <ol style="display:flex; flex-direction:column; gap:0.85rem;">
+                ${f.professionalActivities.responsibilities.map((r, idx) => `
+                  <li style="line-height:1.6; border-left:3px solid #10B981; padding-left:1rem;">
+                    <strong>${idx + 1}.</strong> ${r}
+                  </li>
+                `).join('')}
+              </ol>
+            </div>
+          ` : ''}
+
+          ${showInteraction ? `
+            <div class="info-card">
+              <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-handshake"></i> Industry Interaction</h3>
+              <ol style="display:flex; flex-direction:column; gap:0.85rem;">
+                ${f.professionalActivities.industryInteraction.map((i, idx) => `
+                  <li style="line-height:1.6; border-left:3px solid #EC4899; padding-left:1rem;">
+                    <strong>${idx + 1}.</strong> ${i}
+                  </li>
+                `).join('')}
+              </ol>
+            </div>
+          ` : ''}
+        `;
+      }
 
       default:
         return `<p>Select a tab above to view details.</p>`;
@@ -595,7 +814,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             <div class="footer-links-column">
               <h4>System Details</h4>
-              <p style="font-size:0.825rem; color:#94A3B8;">Standardized Portfolio Architecture v2.6</p>
+              <p style="font-size:0.825rem; color:#94A3B8;">Standardized Portfolio Architecture v2.7</p>
               <p style="font-size:0.825rem; color:#94A3B8; margin-top:0.3rem;">Integrated 6-Tab Multi-Page System.</p>
             </div>
           </div>
@@ -603,6 +822,50 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class="footer-bottom-bar">
             <p>© ${new Date().getFullYear()} Thakur College of Engineering & Technology (Autonomous). All Rights Reserved.</p>
           </div>
+        </div>
+      </footer>
+    `;
+  }
+
+  /* Redesigned 70% Faculty / 30% College Footer */
+  function createFacultyFooterHtml(f) {
+    const emailsHtml = f.contact.officialEmails ? f.contact.officialEmails.map(e => `<a href="mailto:${e}" style="color:#FFFFFF; text-decoration:underline;">${e}</a>`).join(' / ') : `<a href="mailto:${f.contact.officialEmail}" style="color:#FFFFFF; text-decoration:underline;">${f.contact.officialEmail}</a>`;
+    
+    return `
+      <footer class="tcet-footer" style="padding: 2.5rem 0 1.5rem 0;">
+        <div class="container" style="display: grid; grid-template-columns: 2.3fr 1fr; gap: 2rem; @media (max-width: 900px) { grid-template-columns: 1fr; }">
+          <!-- 70% Faculty-Related Content Area -->
+          <div style="border-right: 1px solid rgba(255,255,255,0.1); padding-right: 2rem; @media (max-width: 900px) { border-right: none; padding-right: 0; }">
+            <h3 style="color:#FFFFFF; font-family:var(--font-heading); font-size:1.2rem; margin-bottom:0.5rem;">${f.basicInfo.displayTitle}</h3>
+            <p style="color:#94A3B8; font-size:0.875rem; margin-bottom:1rem;">${f.basicInfo.designation}</p>
+            
+            <div style="display:flex; flex-direction:column; gap:0.5rem; font-size:0.85rem; color:#CBD5E1;">
+              <p><i class="fa-solid fa-envelope" style="color:var(--accent-gold); width:20px;"></i> <strong>Emails:</strong> ${emailsHtml}</p>
+              <p><i class="fa-solid fa-building" style="color:var(--accent-gold); width:20px;"></i> <strong>Office:</strong> ${f.contact.officeLocation}</p>
+              <p><i class="fa-solid fa-map-location-dot" style="color:var(--accent-gold); width:20px;"></i> <strong>Address:</strong> ${f.contact.address}</p>
+              
+              <!-- Leftover profile links placed here -->
+              <div style="margin-top:1rem; display:flex; gap:1rem; align-items:center;">
+                ${f.contact.linkedinUrl ? `<a href="${f.contact.linkedinUrl}" target="_blank" style="color:#CBD5E1;"><i class="fa-brands fa-linkedin" style="font-size:1.25rem;"></i> LinkedIn Profile</a>` : ''}
+              </div>
+            </div>
+          </div>
+
+          <!-- 30% College-Related Content Area -->
+          <div>
+            <img src="assets/images/tcet_college_logo.png" alt="TCET College Crest" class="footer-logo-img" style="margin-bottom:0.75rem;" onerror="this.onerror=null; this.src='assets/images/tcet_college-logo.png';">
+            <h4 style="color:#FFFFFF; font-size:0.9rem; margin-bottom:0.35rem;">TCET Mumbai</h4>
+            <p style="font-size:0.8rem; color:#94A3B8; line-height:1.4; margin-bottom:0.75rem;">
+              Department of Computer Science & Engineering (Internet of Things)
+            </p>
+            <ul style="font-size:0.8rem; display:flex; flex-direction:column; gap:0.35rem;">
+              <li><a href="https://www.tcetmumbai.in/" target="_blank" style="color:#94A3B8;">TCET Website</a></li>
+              <li><a href="https://www.tcetmumbai.in/IOT-CSE/IOTFaculty_AssistantProfessor.html" target="_blank" style="color:#94A3B8;">CSE-IoT Portal</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="container footer-bottom-bar" style="margin-top:1.5rem; padding-top:1rem;">
+          <p>© ${new Date().getFullYear()} Thakur College of Engineering & Technology (Autonomous). All Rights Reserved.</p>
         </div>
       </footer>
     `;
@@ -633,17 +896,17 @@ document.addEventListener('DOMContentLoaded', () => {
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-bottom:1.25rem;">
         <div style="background:var(--bg-slate); border:1px solid var(--border-color); padding:0.75rem; border-radius:8px;">
           <span style="font-size:0.7rem; color:var(--text-light); text-transform:uppercase; font-weight:700;">Highest Qualification</span>
-          <p style="font-weight:700; font-size:0.875rem; color:var(--primary-navy);">${f.highlights.highestQualification}</p>
+          <p style="font-weight:700; font-size:0.875rem; color:var(--primary-navy);">${f.highlights ? f.highlights.highestQualification : (f.education.length > 0 ? f.education[0].degree : '-')}</p>
         </div>
         <div style="background:var(--bg-slate); border:1px solid var(--border-color); padding:0.75rem; border-radius:8px;">
           <span style="font-size:0.7rem; color:var(--text-light); text-transform:uppercase; font-weight:700;">Teaching Experience</span>
-          <p style="font-weight:700; font-size:0.875rem; color:var(--primary-navy);">${f.highlights.teachingExperience}</p>
+          <p style="font-weight:700; font-size:0.875rem; color:var(--primary-navy);">${f.experience.teaching || '-'}</p>
         </div>
       </div>
 
       <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border-color); padding-top:1rem;">
-        <span style="font-size:0.825rem; color:var(--text-light);"><i class="fa-solid fa-envelope"></i> ${f.contact.officialEmail}</span>
-        <a href="#portfolio/${f.metadata.id}/home" class="btn btn-primary" style="width:auto;" onclick="closeModal()">Full Portfolio <i class="fa-solid fa-arrow-right"></i></a>
+        <span style="font-size:0.825rem; color:var(--text-light);"><i class="fa-solid fa-envelope"></i> ${f.contact.officialEmails ? f.contact.officialEmails[0] : f.contact.officialEmail}</span>
+        <a href="#portfolio/${f.metadata.id}/profile" class="btn btn-primary" style="width:auto;" onclick="closeModal()">Full Portfolio <i class="fa-solid fa-arrow-right"></i></a>
       </div>
     `;
 
