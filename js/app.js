@@ -1,10 +1,12 @@
 /* ==========================================================================
-   TCET Faculty Portfolio System - Core Application Engine (v2.8)
-   - Restructured Navigation Tabs (Profile, Teaching, Research & Development, etc.)
-   - Dynamic Empty-Section Hiding Logic
-   - Clean Hero Section with Single Designation, Correct Department Line,
-     Simple Text Name (no hyperlink), and Separate Badge Links (ORCID, Scopus, Google Scholar, ResearchGate)
-   - Redesigned 70% Faculty / 30% College Footer
+   TCET Faculty Portfolio System - Core Application Engine (v3.0)
+   - Expanded 7-Profile Academic & Support Staff Directory
+   - Dynamic Layout Routing based on Designation Category
+     * Faculty: 6 Navigation Tabs (Profile, Teaching, Research, etc.)
+     * Support Staff: 4 Navigation Tabs (Profile, Technical Expertise, Lab & Responsibilities, Training & Achievements)
+   - Dynamic Hiding Logic for Empty Sections
+   - Hero Section cleanup (no name hyperlink)
+   - Copyright bar with AdarshYadav attribution inline
    - Fully optimized and compliant with token spending guidelines
    ========================================================================== */
 
@@ -54,6 +56,11 @@ document.addEventListener('DOMContentLoaded', () => {
         key: 'ASST_PROF',
         title: 'Assistant Professors',
         rankFilter: (f) => f.metadata.rankCategory.includes('Assistant Professor')
+      },
+      {
+        key: 'SUPPORT_STAFF',
+        title: 'Support Staff',
+        rankFilter: (f) => f.metadata.rankCategory === 'Support Staff'
       }
     ];
 
@@ -66,7 +73,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const matchesFilter = currentFilter === 'ALL' ||
         (currentFilter === 'HOD' && f.metadata.rankCategory.includes('Head of Department')) ||
         (currentFilter === 'PROFESSOR' && f.metadata.rankCategory === 'Professor') ||
-        (currentFilter === 'ASST_PROF' && f.metadata.rankCategory.includes('Assistant Professor'));
+        (currentFilter === 'ASST_PROF' && f.metadata.rankCategory.includes('Assistant Professor')) ||
+        (currentFilter === 'SUPPORT_STAFF' && f.metadata.rankCategory === 'Support Staff');
 
       return matchesSearch && matchesFilter;
     });
@@ -132,6 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <button class="filter-btn ${currentFilter === 'HOD' ? 'active' : ''}" data-filter="HOD">HOD</button>
             <button class="filter-btn ${currentFilter === 'PROFESSOR' ? 'active' : ''}" data-filter="PROFESSOR">Professors</button>
             <button class="filter-btn ${currentFilter === 'ASST_PROF' ? 'active' : ''}" data-filter="ASST_PROF">Assistant Professors</button>
+            <button class="filter-btn ${currentFilter === 'SUPPORT_STAFF' ? 'active' : ''}" data-filter="SUPPORT_STAFF">Support Staff</button>
           </div>
         </div>
       </div>
@@ -215,7 +224,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function createModernFacultyCardHtml(f) {
     const isHod = f.metadata.rankCategory.includes('Head of Department');
-    const qualSummary = f.education.map(e => `${e.degree}${e.specialization ? ` (${e.specialization.split(' ')[0]})` : ''}`).join(' • ');
+    
+    // Fallback for qualifications display in list card
+    const qualSummary = f.education && f.education.length > 0 ? f.education.map(e => `${e.degree}${e.specialization ? ` (${e.specialization.split(' ')[0]})` : ''}`).join(' • ') : '-';
+    
+    // Support Staff check for qualifications/spec tags
+    const specTags = f.specializations ? f.specializations.slice(0, 3) : (f.technicalSkills ? f.technicalSkills.slice(0, 3) : []);
 
     return `
       <div class="faculty-card-modern ${isHod ? 'rank-hod' : ''}">
@@ -226,7 +240,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="card-title-group">
               <h3>${f.basicInfo.displayTitle}</h3>
               <p class="designation">${f.basicInfo.designation}</p>
-              <p class="vidwan-tag"><i class="fa-solid fa-id-card"></i> Vidwan ID: <strong>${f.contact.vidwanId}</strong></p>
+              ${f.contact.vidwanId && f.contact.vidwanId !== '-' ? `<p class="vidwan-tag"><i class="fa-solid fa-id-card"></i> Vidwan ID: <strong>${f.contact.vidwanId}</strong></p>` : ''}
             </div>
           </div>
 
@@ -236,7 +250,7 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
 
           <div class="specs-flex">
-            ${f.specializations.slice(0, 3).map(s => `<span class="spec-badge">${s}</span>`).join('')}
+            ${specTags.map(s => `<span class="spec-badge">${s}</span>`).join('')}
           </div>
 
           <div class="card-actions-grid">
@@ -253,7 +267,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* ==========================================================================
-     2. PERSONAL FACULTY PORTFOLIO VIEW (IIT BOMBAY STYLE, 6 TABS)
+     2. PERSONAL FACULTY & STAFF PORTFOLIO VIEW
      ========================================================================== */
   function renderPortfolioView(facultyId, activeTab) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -262,15 +276,22 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!f) {
       appEl.innerHTML = `
         <div class="container" style="padding: 5rem 0; text-align: center;">
-          <h2>Faculty Profile Not Found</h2>
+          <h2>Profile Not Found</h2>
           <p style="margin-top: 1rem;"><a href="#directory" class="btn btn-primary">Return to Faculty Directory</a></p>
         </div>
       `;
       return;
     }
 
-    // Exactly 6 Restructured Tabs
-    const tabs = [
+    const isSupportStaff = f.metadata.rankCategory === "Support Staff";
+
+    // Dynamic Navigation tabs based on designation category
+    const tabs = isSupportStaff ? [
+      { id: 'profile', label: 'Profile', icon: 'fa-user' },
+      { id: 'expertise', label: 'Technical Expertise', icon: 'fa-screwdriver-wrench' },
+      { id: 'lab', label: 'Lab & Responsibilities', icon: 'fa-flask' },
+      { id: 'achievements', label: 'Training & Achievements', icon: 'fa-certificate' }
+    ] : [
       { id: 'profile', label: 'Profile', icon: 'fa-user' },
       { id: 'teaching', label: 'Teaching', icon: 'fa-chalkboard-user' },
       { id: 'research', label: 'Research & Development', icon: 'fa-flask' },
@@ -343,7 +364,7 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
       </section>
 
-      <!-- Exactly 6 Navigation Tabs -->
+      <!-- Navigation Tabs -->
       <nav class="portfolio-tab-nav">
         <div class="container">
           <div class="portfolio-tab-list">
@@ -369,418 +390,607 @@ document.addEventListener('DOMContentLoaded', () => {
   /* Render Sub-Page Content Based on Selected Tab */
   function renderPortfolioTabContent(f, tab) {
     const hasData = (val) => val && (Array.isArray(val) ? val.length > 0 : Object.keys(val).length > 0 && val !== '-');
+    const isSupportStaff = f.metadata.rankCategory === "Support Staff";
 
-    switch (tab) {
-      /* TAB 1: PROFILE */
-      case 'profile': {
-        const showBio = hasData(f.basicInfo.shortBio);
-        const showEducation = hasData(f.education);
-        const showExperience = hasData(f.experience);
-        const showSpecializations = hasData(f.specializations);
+    if (isSupportStaff) {
+      /* ==========================================================================
+         A. SUPPORT STAFF LAYOUT RENDERING
+         ========================================================================== */
+      switch (tab) {
+        /* TAB 1: PROFILE */
+        case 'profile': {
+          const showBio = hasData(f.basicInfo.shortBio);
+          const showEducation = hasData(f.education);
+          const showExperience = hasData(f.experience);
 
-        if (!showBio && !showEducation && !showExperience && !showSpecializations) {
-          return `<div class="info-card"><p>No profile data available.</p></div>`;
+          if (!showBio && !showEducation && !showExperience) {
+            return `<div class="info-card"><p>No profile data available.</p></div>`;
+          }
+
+          return `
+            <h2 class="subpage-title"><i class="fa-solid fa-user"></i> Profile & Overview</h2>
+            
+            ${showBio ? `
+              <div class="info-card">
+                <h3 style="font-size:1.1rem; color:var(--primary-navy); margin-bottom:0.5rem;"><i class="fa-solid fa-user-tie"></i> Biography</h3>
+                <p style="font-size:1rem; line-height:1.7; color:var(--text-main);">${f.basicInfo.shortBio}</p>
+              </div>
+            ` : ''}
+
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:2rem; @media(max-width:850px){grid-template-columns: 1fr;}">
+              ${showEducation ? `
+                <div class="info-card">
+                  <h3 style="font-size:1.15rem; color:var(--primary-navy); margin-bottom:1.25rem;"><i class="fa-solid fa-user-graduate"></i> Educational Qualifications</h3>
+                  <div class="timeline">
+                    ${f.education.map(e => `
+                      <div class="timeline-item">
+                        <div class="timeline-title">${e.degree}</div>
+                        ${e.specialization ? `<div class="timeline-subtitle">${e.specialization}</div>` : ''}
+                        <div class="timeline-meta">${e.institution || ''} ${e.year ? `• ${e.year}` : ''}</div>
+                      </div>
+                    `).join('')}
+                  </div>
+                </div>
+              ` : ''}
+
+              ${showExperience ? `
+                <div class="info-card">
+                  <h3 style="font-size:1.15rem; color:var(--primary-navy); margin-bottom:1.25rem;"><i class="fa-solid fa-briefcase"></i> Experience</h3>
+                  <div style="display:flex; flex-direction:column; gap:0.75rem;">
+                    ${f.experience.total && f.experience.total !== '-' ? `<p><strong>Total Experience:</strong> ${f.experience.total}</p>` : ''}
+                    ${f.experience.teaching && f.experience.teaching !== '-' ? `<p><strong>Teaching Experience:</strong> ${f.experience.teaching}</p>` : ''}
+                    ${f.experience.industry && f.experience.industry !== '-' ? `<p><strong>Industry Experience:</strong> ${f.experience.industry}</p>` : ''}
+                    ${f.experience.research && f.experience.research !== '-' ? `<p><strong>Research Experience:</strong> ${f.experience.research}</p>` : ''}
+                  </div>
+                </div>
+              ` : ''}
+            </div>
+          `;
         }
 
-        return `
-          <h2 class="subpage-title"><i class="fa-solid fa-user"></i> Profile & Overview</h2>
-          
-          ${showBio ? `
-            <div class="info-card">
-              <h3 style="font-size:1.1rem; color:var(--primary-navy); margin-bottom:0.5rem;"><i class="fa-solid fa-user-tie"></i> Biography</h3>
-              <p style="font-size:1rem; line-height:1.7; color:var(--text-main);">${f.basicInfo.shortBio}</p>
-            </div>
-          ` : ''}
+        /* TAB 2: TECHNICAL EXPERTISE */
+        case 'expertise': {
+          const showSkills = hasData(f.technicalSkills);
+          const showOther = hasData(f.otherDetails);
 
-          ${showSpecializations ? `
-            <div class="info-card">
-              <h3 style="font-size:1.05rem; color:var(--primary-navy); margin-bottom:0.75rem;"><i class="fa-solid fa-microchip"></i> Areas of Specialization</h3>
-              <div class="specs-flex">
-                ${f.specializations.map(s => `<span class="spec-badge" style="font-size:0.85rem; padding:0.4rem 0.8rem;">${s}</span>`).join('')}
+          if (!showSkills && !showOther) {
+            return `<div class="info-card"><p>No expertise details available.</p></div>`;
+          }
+
+          return `
+            <h2 class="subpage-title"><i class="fa-solid fa-screwdriver-wrench"></i> Technical Expertise</h2>
+            
+            ${showSkills ? `
+              <div class="info-card">
+                <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-gears"></i> Technical Skills & Tools</h3>
+                <div class="specs-flex" style="margin-top: 0.5rem;">
+                  ${f.technicalSkills.map(s => `<span class="spec-badge" style="font-size:0.9rem; padding:0.4rem 0.8rem;">${s}</span>`).join('')}
+                </div>
               </div>
-            </div>
-          ` : ''}
+            ` : ''}
+
+            ${showOther ? `
+              <div class="info-card">
+                <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-circle-info"></i> Other Details</h3>
+                <ul style="display:flex; flex-direction:column; gap:0.75rem;">
+                  ${f.otherDetails.map(d => `<li style="line-height:1.6; color:var(--text-main);"><i class="fa-solid fa-circle-chevron-right" style="color:var(--primary-blue); margin-right:0.5rem;"></i> ${d}</li>`).join('')}
+                </ul>
+              </div>
+            ` : ''}
+          `;
+        }
+
+        /* TAB 3: LAB & RESPONSIBILITIES */
+        case 'lab': {
+          const showLabs = hasData(f.laboratoriesHandled);
+          const showResp = hasData(f.labResponsibilities);
+          const showProj = hasData(f.projectsSupported);
+
+          if (!showLabs && !showResp && !showProj) {
+            return `<div class="info-card"><p>No laboratory details available.</p></div>`;
+          }
+
+          return `
+            <h2 class="subpage-title"><i class="fa-solid fa-flask"></i> Lab & Responsibilities</h2>
+
+            ${showLabs ? `
+              <div class="info-card">
+                <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-network-wired"></i> Laboratories Handled / Supported</h3>
+                <ul style="display:flex; flex-direction:column; gap:0.5rem;">
+                  ${f.laboratoriesHandled.map(l => `<li style="line-height:1.6;"><i class="fa-solid fa-chevron-right" style="color:var(--accent-gold); font-size:0.8rem;"></i> ${l}</li>`).join('')}
+                </ul>
+              </div>
+            ` : ''}
+
+            ${showResp ? `
+              <div class="info-card">
+                <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-list-check"></i> Laboratory Responsibilities</h3>
+                <ul style="display:flex; flex-direction:column; gap:0.75rem;">
+                  ${f.labResponsibilities.map(r => `<li style="line-height:1.6;"><i class="fa-solid fa-circle-check" style="color:var(--primary-blue); margin-right:0.5rem;"></i> ${r}</li>`).join('')}
+                </ul>
+              </div>
+            ` : ''}
+
+            ${showProj ? `
+              <div class="info-card">
+                <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-diagram-project"></i> Projects & Prototypes Supported</h3>
+                <ul style="display:flex; flex-direction:column; gap:0.5rem;">
+                  ${f.projectsSupported.map(p => `<li style="line-height:1.6;"><i class="fa-solid fa-circle-chevron-right" style="color:#10B981; margin-right:0.5rem;"></i> ${p}</li>`).join('')}
+                </ul>
+              </div>
+            ` : ''}
+          `;
+        }
+
+        /* TAB 4: TRAINING & ACHIEVEMENTS */
+        case 'achievements': {
+          const showCert = hasData(f.achievements.certifications);
+          const showFdp = hasData(f.achievements.fdpAttended);
+          const showResp = hasData(f.achievements.responsibilities);
+
+          if (!showCert && !showFdp && !showResp) {
+            return `<div class="info-card"><p>No training or achievements available.</p></div>`;
+          }
+
+          return `
+            <h2 class="subpage-title"><i class="fa-solid fa-certificate"></i> Training & Achievements</h2>
+
+            ${showCert ? `
+              <div class="info-card">
+                <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-award"></i> Certifications / Technical Training</h3>
+                <ol style="display:flex; flex-direction:column; gap:0.85rem;">
+                  ${f.achievements.certifications.map((c, idx) => `
+                    <li style="line-height:1.6; border-left:3px solid #10B981; padding-left:1rem;">
+                      <strong>${idx + 1}.</strong> ${c}
+                    </li>
+                  `).join('')}
+                </ol>
+              </div>
+            ` : ''}
+
+            ${showFdp ? `
+              <div class="info-card">
+                <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-chalkboard-user"></i> FDP / STTP / Workshops Attended</h3>
+                <ol style="display:flex; flex-direction:column; gap:0.85rem;">
+                  ${f.achievements.fdpAttended.map((w, idx) => `
+                    <li style="line-height:1.6; border-left:3px solid var(--primary-blue); padding-left:1rem;">
+                      <strong>${idx + 1}.</strong> ${w}
+                    </li>
+                  `).join('')}
+                </ol>
+              </div>
+            ` : ''}
+
+            ${showResp ? `
+              <div class="info-card">
+                <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-sitemap"></i> Institutional & Department Responsibilities</h3>
+                <ul style="display:flex; flex-direction:column; gap:0.75rem;">
+                  ${f.achievements.responsibilities.map(r => `<li style="line-height:1.6;"><i class="fa-solid fa-circle-info" style="color:var(--accent-gold); margin-right:0.5rem;"></i> ${r}</li>`).join('')}
+                </ul>
+              </div>
+            ` : ''}
+          `;
+        }
+
+        default:
+          return `<p>Select a tab above to view details.</p>`;
+      }
+    } else {
+      /* ==========================================================================
+         B. STANDARD FACULTY LAYOUT RENDERING
+         ========================================================================== */
+      switch (tab) {
+        /* TAB 1: PROFILE */
+        case 'profile': {
+          const showBio = hasData(f.basicInfo.shortBio);
+          const showEducation = hasData(f.education);
+          const showExperience = hasData(f.experience);
+          const showSpecializations = hasData(f.specializations);
+
+          if (!showBio && !showEducation && !showExperience && !showSpecializations) {
+            return `<div class="info-card"><p>No profile data available.</p></div>`;
+          }
+
+          return `
+            <h2 class="subpage-title"><i class="fa-solid fa-user"></i> Profile & Overview</h2>
+            
+            ${showBio ? `
+              <div class="info-card">
+                <h3 style="font-size:1.1rem; color:var(--primary-navy); margin-bottom:0.5rem;"><i class="fa-solid fa-user-tie"></i> Biography</h3>
+                <p style="font-size:1rem; line-height:1.7; color:var(--text-main);">${f.basicInfo.shortBio}</p>
+              </div>
+            ` : ''}
+
+            ${showSpecializations ? `
+              <div class="info-card">
+                <h3 style="font-size:1.05rem; color:var(--primary-navy); margin-bottom:0.75rem;"><i class="fa-solid fa-microchip"></i> Areas of Specialization</h3>
+                <div class="specs-flex">
+                  ${f.specializations.map(s => `<span class="spec-badge" style="font-size:0.85rem; padding:0.4rem 0.8rem;">${s}</span>`).join('')}
+                </div>
+              </div>
+            ` : ''}
 
           <div style="display:grid; grid-template-columns: 1fr 1fr; gap:2rem; @media(max-width:850px){grid-template-columns: 1fr;}">
-            ${showEducation ? `
+              ${showEducation ? `
+                <div class="info-card">
+                  <h3 style="font-size:1.15rem; color:var(--primary-navy); margin-bottom:1.25rem;"><i class="fa-solid fa-user-graduate"></i> Educational Qualifications</h3>
+                  <div class="timeline">
+                    ${f.education.map(e => `
+                      <div class="timeline-item">
+                        <div class="timeline-title">${e.degree}</div>
+                        ${e.specialization ? `<div class="timeline-subtitle">${e.specialization}</div>` : ''}
+                        <div class="timeline-meta">${e.institution || ''} ${e.year ? `• ${e.year}` : ''}</div>
+                      </div>
+                    `).join('')}
+                  </div>
+                </div>
+              ` : ''}
+
+              ${showExperience ? `
+                <div class="info-card">
+                  <!-- Head styled as just "Experience" -->
+                  <h3 style="font-size:1.15rem; color:var(--primary-navy); margin-bottom:1.25rem;"><i class="fa-solid fa-briefcase"></i> Experience</h3>
+                  <div style="display:flex; flex-direction:column; gap:0.75rem;">
+                    ${f.experience.teaching && f.experience.teaching !== '-' ? `<p><strong>Total Teaching Experience:</strong> ${f.experience.teaching}</p>` : ''}
+                    ${f.experience.industry && f.experience.industry !== '-' ? `<p><strong>Industry Experience:</strong> ${f.experience.industry}</p>` : ''}
+                    ${f.experience.research && f.experience.research !== '-' ? `<p><strong>Research Experience:</strong> ${f.experience.research}</p>` : ''}
+                    ${f.experience.dateOfJoiningTCET && f.experience.dateOfJoiningTCET !== '' ? `<p><strong>Date of Joining TCET:</strong> ${f.experience.dateOfJoiningTCET}</p>` : ''}
+                  </div>
+                </div>
+              ` : ''}
+            </div>
+          `;
+        }
+
+        /* TAB 2: TEACHING */
+        case 'teaching': {
+          const showCurrent = hasData(f.teaching.currentCourses);
+          const showPast = hasData(f.teaching.coursesTaught);
+          const showInnovative = hasData(f.teaching.innovativePractices);
+
+          if (!showCurrent && !showPast && !showInnovative) {
+            return `<div class="info-card"><p>No teaching data available.</p></div>`;
+          }
+
+          return `
+            <h2 class="subpage-title"><i class="fa-solid fa-chalkboard-user"></i> Teaching & Learning</h2>
+            
+            ${showCurrent ? `
               <div class="info-card">
-                <h3 style="font-size:1.15rem; color:var(--primary-navy); margin-bottom:1.25rem;"><i class="fa-solid fa-user-graduate"></i> Educational Qualifications</h3>
-                <div class="timeline">
-                  ${f.education.map(e => `
-                    <div class="timeline-item">
-                      <div class="timeline-title">${e.degree}</div>
-                      ${e.specialization ? `<div class="timeline-subtitle">${e.specialization}</div>` : ''}
-                      <div class="timeline-meta">${e.institution} ${e.year ? `• ${e.year}` : ''}</div>
+                <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-clock"></i> Current Courses</h3>
+                <ul style="display:flex; flex-direction:column; gap:0.5rem;">
+                  ${f.teaching.currentCourses.map(c => `<li><i class="fa-solid fa-chevron-right" style="color:var(--accent-gold); font-size:0.8rem;"></i> ${c}</li>`).join('')}
+                </ul>
+              </div>
+            ` : ''}
+
+            ${showPast ? `
+              <div class="info-card">
+                <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-history"></i> Courses Taught</h3>
+                <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:1rem;">
+                  ${f.teaching.coursesTaught.map(c => `
+                    <div style="background:var(--bg-slate); padding:0.8rem 1rem; border-radius:8px; border:1px solid var(--border-color); font-weight:600; font-size:0.9rem; color:var(--primary-navy);">
+                      ${c}
                     </div>
                   `).join('')}
                 </div>
               </div>
             ` : ''}
 
-            ${showExperience ? `
+            ${showInnovative ? `
               <div class="info-card">
-                <!-- Head styled as just "Experience" -->
-                <h3 style="font-size:1.15rem; color:var(--primary-navy); margin-bottom:1.25rem;"><i class="fa-solid fa-briefcase"></i> Experience</h3>
-                <div style="display:flex; flex-direction:column; gap:0.75rem;">
-                  ${f.experience.teaching && f.experience.teaching !== '-' ? `<p><strong>Total Teaching Experience:</strong> ${f.experience.teaching}</p>` : ''}
-                  ${f.experience.industry && f.experience.industry !== '-' ? `<p><strong>Industry Experience:</strong> ${f.experience.industry}</p>` : ''}
-                  ${f.experience.research && f.experience.research !== '-' ? `<p><strong>Research Experience:</strong> ${f.experience.research}</p>` : ''}
-                  ${f.experience.dateOfJoiningTCET && f.experience.dateOfJoiningTCET !== '' ? `<p><strong>Date of Joining TCET:</strong> ${f.experience.dateOfJoiningTCET}</p>` : ''}
+                <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-lightbulb"></i> Innovative Teaching Practices</h3>
+                <ul style="display:flex; flex-direction:column; gap:0.75rem;">
+                  ${f.teaching.innovativePractices.map(p => `<li style="line-height:1.6;"><i class="fa-solid fa-circle-check" style="color:var(--primary-blue); margin-right:0.5rem;"></i> ${p}</li>`).join('')}
+                </ul>
+              </div>
+            ` : ''}
+          `;
+        }
+
+        /* TAB 3: RESEARCH & DEVELOPMENT */
+        case 'research': {
+          const showInterests = hasData(f.research.interests);
+          const showJournals = hasData(f.research.journals);
+          const showConferences = hasData(f.research.conferences);
+          const showBooks = hasData(f.research.books);
+          const showPatents = hasData(f.research.patents);
+          const showCopyrights = hasData(f.research.copyrights);
+          const showGrants = hasData(f.research.fundedProjects);
+          const showConsultancy = hasData(f.research.consultancy);
+
+          if (!showInterests && !showJournals && !showConferences && !showBooks && !showPatents && !showCopyrights && !showGrants && !showConsultancy) {
+            return `<div class="info-card"><p>No research and development data available.</p></div>`;
+          }
+
+          return `
+            <h2 class="subpage-title"><i class="fa-solid fa-flask"></i> Research & Development</h2>
+            
+            ${showInterests ? `
+              <div class="info-card">
+                <h3 style="color:var(--primary-navy); margin-bottom:0.75rem; font-size:1.1rem;"><i class="fa-solid fa-magnifying-glass-chart"></i> Research Interests</h3>
+                <div class="specs-flex">
+                  ${f.research.interests.map(i => `<span class="spec-badge" style="background:#EFF6FF; color:var(--primary-blue); font-size:0.85rem; padding:0.4rem 0.8rem;">${i}</span>`).join('')}
                 </div>
               </div>
             ` : ''}
-          </div>
-        `;
-      }
 
-      /* TAB 2: TEACHING */
-      case 'teaching': {
-        const showCurrent = hasData(f.teaching.currentCourses);
-        const showPast = hasData(f.teaching.coursesTaught);
-        const showInnovative = hasData(f.teaching.innovativePractices);
-
-        if (!showCurrent && !showPast && !showInnovative) {
-          return `<div class="info-card"><p>No teaching data available.</p></div>`;
-        }
-
-        return `
-          <h2 class="subpage-title"><i class="fa-solid fa-chalkboard-user"></i> Teaching & Learning</h2>
-          
-          ${showCurrent ? `
-            <div class="info-card">
-              <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-clock"></i> Current Courses</h3>
-              <ul style="display:flex; flex-direction:column; gap:0.5rem;">
-                ${f.teaching.currentCourses.map(c => `<li><i class="fa-solid fa-chevron-right" style="color:var(--accent-gold); font-size:0.8rem;"></i> ${c}</li>`).join('')}
-              </ul>
-            </div>
-          ` : ''}
-
-          ${showPast ? `
-            <div class="info-card">
-              <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-history"></i> Courses Taught</h3>
-              <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:1rem;">
-                ${f.teaching.coursesTaught.map(c => `
-                  <div style="background:var(--bg-slate); padding:0.8rem 1rem; border-radius:8px; border:1px solid var(--border-color); font-weight:600; font-size:0.9rem; color:var(--primary-navy);">
-                    ${c}
-                  </div>
-                `).join('')}
+            ${showJournals ? `
+              <div class="info-card">
+                <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-book"></i> Journal Publications</h3>
+                <ol style="display:flex; flex-direction:column; gap:0.85rem;">
+                  ${f.research.journals.map((j, idx) => `
+                    <li style="line-height:1.6; border-left:3px solid var(--primary-blue); padding-left:1rem;">
+                      <strong>${idx + 1}.</strong> ${j}
+                    </li>
+                  `).join('')}
+                </ol>
               </div>
-            </div>
-          ` : ''}
+            ` : ''}
 
-          ${showInnovative ? `
-            <div class="info-card">
-              <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-lightbulb"></i> Innovative Teaching Practices</h3>
-              <ul style="display:flex; flex-direction:column; gap:0.75rem;">
-                ${f.teaching.innovativePractices.map(p => `<li style="line-height:1.6;"><i class="fa-solid fa-circle-check" style="color:var(--primary-blue); margin-right:0.5rem;"></i> ${p}</li>`).join('')}
-              </ul>
-            </div>
-          ` : ''}
-        `;
-      }
-
-      /* TAB 3: RESEARCH & DEVELOPMENT */
-      case 'research': {
-        const showInterests = hasData(f.research.interests);
-        const showJournals = hasData(f.research.journals);
-        const showConferences = hasData(f.research.conferences);
-        const showBooks = hasData(f.research.books);
-        const showPatents = hasData(f.research.patents);
-        const showCopyrights = hasData(f.research.copyrights);
-        const showGrants = hasData(f.research.fundedProjects);
-        const showConsultancy = hasData(f.research.consultancy);
-
-        if (!showInterests && !showJournals && !showConferences && !showBooks && !showPatents && !showCopyrights && !showGrants && !showConsultancy) {
-          return `<div class="info-card"><p>No research and development data available.</p></div>`;
-        }
-
-        return `
-          <h2 class="subpage-title"><i class="fa-solid fa-flask"></i> Research & Development</h2>
-          
-          ${showInterests ? `
-            <div class="info-card">
-              <h3 style="color:var(--primary-navy); margin-bottom:0.75rem; font-size:1.1rem;"><i class="fa-solid fa-magnifying-glass-chart"></i> Research Interests</h3>
-              <div class="specs-flex">
-                ${f.research.interests.map(i => `<span class="spec-badge" style="background:#EFF6FF; color:var(--primary-blue); font-size:0.85rem; padding:0.4rem 0.8rem;">${i}</span>`).join('')}
+            ${showConferences ? `
+              <div class="info-card">
+                <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-users-rectangle"></i> Conference Publications</h3>
+                <ol style="display:flex; flex-direction:column; gap:0.85rem;">
+                  ${f.research.conferences.map((c, idx) => `
+                    <li style="line-height:1.6; border-left:3px solid var(--accent-gold); padding-left:1rem;">
+                      <strong>${idx + 1}.</strong> ${c}
+                    </li>
+                  `).join('')}
+                </ol>
               </div>
-            </div>
-          ` : ''}
+            ` : ''}
 
-          ${showJournals ? `
-            <div class="info-card">
-              <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-book"></i> Journal Publications</h3>
-              <ol style="display:flex; flex-direction:column; gap:0.85rem;">
-                ${f.research.journals.map((j, idx) => `
-                  <li style="line-height:1.6; border-left:3px solid var(--primary-blue); padding-left:1rem;">
-                    <strong>${idx + 1}.</strong> ${j}
-                  </li>
-                `).join('')}
-              </ol>
-            </div>
-          ` : ''}
+            ${showBooks ? `
+              <div class="info-card">
+                <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-atlas"></i> Books & Book Chapters</h3>
+                <ol style="display:flex; flex-direction:column; gap:0.85rem;">
+                  ${f.research.books.map((b, idx) => `
+                    <li style="line-height:1.6; border-left:3px solid #10B981; padding-left:1rem;">
+                      <strong>${idx + 1}.</strong> ${b}
+                    </li>
+                  `).join('')}
+                </ol>
+              </div>
+            ` : ''}
 
-          ${showConferences ? `
-            <div class="info-card">
-              <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-users-rectangle"></i> Conference Publications</h3>
-              <ol style="display:flex; flex-direction:column; gap:0.85rem;">
-                ${f.research.conferences.map((c, idx) => `
-                  <li style="line-height:1.6; border-left:3px solid var(--accent-gold); padding-left:1rem;">
-                    <strong>${idx + 1}.</strong> ${c}
-                  </li>
-                `).join('')}
-              </ol>
-            </div>
-          ` : ''}
+            ${showPatents ? `
+              <div class="info-card">
+                <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-lightbulb"></i> Patents</h3>
+                <ol style="display:flex; flex-direction:column; gap:0.85rem;">
+                  ${f.research.patents.map((p, idx) => `
+                    <li style="line-height:1.6; border-left:3px solid #F59E0B; padding-left:1rem;">
+                      <strong>${idx + 1}.</strong> ${p}
+                    </li>
+                  `).join('')}
+                </ol>
+              </div>
+            ` : ''}
 
-          ${showBooks ? `
-            <div class="info-card">
-              <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-atlas"></i> Books & Book Chapters</h3>
-              <ol style="display:flex; flex-direction:column; gap:0.85rem;">
-                ${f.research.books.map((b, idx) => `
-                  <li style="line-height:1.6; border-left:3px solid #10B981; padding-left:1rem;">
-                    <strong>${idx + 1}.</strong> ${b}
-                  </li>
-                `).join('')}
-              </ol>
-            </div>
-          ` : ''}
+            ${showCopyrights ? `
+              <div class="info-card">
+                <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-copyright"></i> Copyrights</h3>
+                <ol style="display:flex; flex-direction:column; gap:0.85rem;">
+                  ${f.research.copyrights.map((c, idx) => `
+                    <li style="line-height:1.6; border-left:3px solid #8B5CF6; padding-left:1rem;">
+                      <strong>${idx + 1}.</strong> ${c}
+                    </li>
+                  `).join('')}
+                </ol>
+              </div>
+            ` : ''}
 
-          ${showPatents ? `
-            <div class="info-card">
-              <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-lightbulb"></i> Patents</h3>
-              <ol style="display:flex; flex-direction:column; gap:0.85rem;">
-                ${f.research.patents.map((p, idx) => `
-                  <li style="line-height:1.6; border-left:3px solid #F59E0B; padding-left:1rem;">
-                    <strong>${idx + 1}.</strong> ${p}
-                  </li>
-                `).join('')}
-              </ol>
-            </div>
-          ` : ''}
+            ${showGrants ? `
+              <div class="info-card">
+                <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-hand-holding-dollar"></i> Funded Projects</h3>
+                <ol style="display:flex; flex-direction:column; gap:0.85rem;">
+                  ${f.research.fundedProjects.map((p, idx) => `
+                    <li style="line-height:1.6; border-left:3px solid #EC4899; padding-left:1rem;">
+                      <strong>${idx + 1}.</strong> ${p}
+                    </li>
+                  `).join('')}
+                </ol>
+              </div>
+            ` : ''}
 
-          ${showCopyrights ? `
-            <div class="info-card">
-              <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-copyright"></i> Copyrights</h3>
-              <ol style="display:flex; flex-direction:column; gap:0.85rem;">
-                ${f.research.copyrights.map((c, idx) => `
-                  <li style="line-height:1.6; border-left:3px solid #8B5CF6; padding-left:1rem;">
-                    <strong>${idx + 1}.</strong> ${c}
-                  </li>
-                `).join('')}
-              </ol>
-            </div>
-          ` : ''}
-
-          ${showGrants ? `
-            <div class="info-card">
-              <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-hand-holding-dollar"></i> Funded Projects</h3>
-              <ol style="display:flex; flex-direction:column; gap:0.85rem;">
-                ${f.research.fundedProjects.map((p, idx) => `
-                  <li style="line-height:1.6; border-left:3px solid #EC4899; padding-left:1rem;">
-                    <strong>${idx + 1}.</strong> ${p}
-                  </li>
-                `).join('')}
-              </ol>
-            </div>
-          ` : ''}
-
-          ${showConsultancy ? `
-            <div class="info-card">
-              <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-comments-dollar"></i> Consultancy</h3>
-              <ol style="display:flex; flex-direction:column; gap:0.85rem;">
-                ${f.research.consultancy.map((c, idx) => `
-                  <li style="line-height:1.6; border-left:3px solid #64748B; padding-left:1rem;">
-                    <strong>${idx + 1}.</strong> ${c}
-                  </li>
-                `).join('')}
-              </ol>
-            </div>
-          ` : ''}
-        `;
-      }
-
-      /* TAB 4: PROJECTS & MENTORING */
-      case 'projects': {
-        const showProjects = hasData(f.studentMentoring.projectsGuided);
-        const showTeams = hasData(f.studentMentoring.teamsMentored);
-
-        if (!showProjects && !showTeams) {
-          return `<div class="info-card"><p>No projects or mentoring data available.</p></div>`;
+            ${showConsultancy ? `
+              <div class="info-card">
+                <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-comments-dollar"></i> Consultancy</h3>
+                <ol style="display:flex; flex-direction:column; gap:0.85rem;">
+                  ${f.research.consultancy.map((c, idx) => `
+                    <li style="line-height:1.6; border-left:3px solid #64748B; padding-left:1rem;">
+                      <strong>${idx + 1}.</strong> ${c}
+                    </li>
+                  `).join('')}
+                </ol>
+              </div>
+            ` : ''}
+          `;
         }
 
-        return `
-          <h2 class="subpage-title"><i class="fa-solid fa-list-check"></i> Projects & Mentoring</h2>
-          
-          ${showProjects ? `
-            <div class="info-card">
-              <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-diagram-project"></i> B.E. Projects Guided</h3>
-              <ol style="display:flex; flex-direction:column; gap:0.85rem;">
-                ${f.studentMentoring.projectsGuided.map((p, idx) => `
-                  <li style="line-height:1.6; border-left:3px solid var(--primary-blue); padding-left:1rem;">
-                    <strong>${idx + 1}.</strong> ${p}
-                  </li>
-                `).join('')}
-              </ol>
-            </div>
-          ` : ''}
+        /* TAB 4: PROJECTS & MENTORING */
+        case 'projects': {
+          const showProjects = hasData(f.studentMentoring.projectsGuided);
+          const showTeams = hasData(f.studentMentoring.teamsMentored);
 
-          ${showTeams ? `
-            <div class="info-card">
-              <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-people-group"></i> Competition & Hackathon Teams Mentored</h3>
-              <ol style="display:flex; flex-direction:column; gap:0.85rem;">
-                ${f.studentMentoring.teamsMentored.map((t, idx) => `
-                  <li style="line-height:1.6; border-left:3px solid var(--accent-gold); padding-left:1rem;">
-                    <strong>${idx + 1}.</strong> ${t}
-                  </li>
-                `).join('')}
-              </ol>
-            </div>
-          ` : ''}
-        `;
-      }
+          if (!showProjects && !showTeams) {
+            return `<div class="info-card"><p>No projects or mentoring data available.</p></div>`;
+          }
 
-      /* TAB 5: ACHIEVEMENTS & DEVELOPMENT */
-      case 'achievements': {
-        const showAwards = hasData(f.achievements.awards);
-        const showCertifications = hasData(f.achievements.certifications);
-        const showFdp = hasData(f.achievements.fdpAttended);
-        const showConducted = hasData(f.achievements.workshopsConducted);
+          return `
+            <h2 class="subpage-title"><i class="fa-solid fa-list-check"></i> Projects & Mentoring</h2>
+            
+            ${showProjects ? `
+              <div class="info-card">
+                <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-diagram-project"></i> B.E. Projects Guided</h3>
+                <ol style="display:flex; flex-direction:column; gap:0.85rem;">
+                  ${f.studentMentoring.projectsGuided.map((p, idx) => `
+                    <li style="line-height:1.6; border-left:3px solid var(--primary-blue); padding-left:1rem;">
+                      <strong>${idx + 1}.</strong> ${p}
+                    </li>
+                  `).join('')}
+                </ol>
+              </div>
+            ` : ''}
 
-        if (!showAwards && !showCertifications && !showFdp && !showConducted) {
-          return `<div class="info-card"><p>No achievements or training data available.</p></div>`;
+            ${showTeams ? `
+              <div class="info-card">
+                <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-people-group"></i> Competition & Hackathon Teams Mentored</h3>
+                <ol style="display:flex; flex-direction:column; gap:0.85rem;">
+                  ${f.studentMentoring.teamsMentored.map((t, idx) => `
+                    <li style="line-height:1.6; border-left:3px solid var(--accent-gold); padding-left:1rem;">
+                      <strong>${idx + 1}.</strong> ${t}
+                    </li>
+                  `).join('')}
+                </ol>
+              </div>
+            ` : ''}
+          `;
         }
 
-        return `
-          <h2 class="subpage-title"><i class="fa-solid fa-trophy"></i> Achievements & Faculty Development</h2>
-          
-          ${showAwards ? `
-            <div class="info-card">
-              <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-award"></i> Awards & Recognitions</h3>
-              <ol style="display:flex; flex-direction:column; gap:0.85rem;">
-                ${f.achievements.awards.map((a, idx) => `
-                  <li style="line-height:1.6; border-left:3px solid #10B981; padding-left:1rem;">
-                    <strong>${idx + 1}.</strong> ${a}
-                  </li>
-                `).join('')}
-              </ol>
-            </div>
-          ` : ''}
+        /* TAB 5: ACHIEVEMENTS & DEVELOPMENT */
+        case 'achievements': {
+          const showAwards = hasData(f.achievements.awards);
+          const showCertifications = hasData(f.achievements.certifications);
+          const showFdp = hasData(f.achievements.fdpAttended);
+          const showConducted = hasData(f.achievements.workshopsConducted);
 
-          ${showCertifications ? `
-            <div class="info-card">
-              <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-certificate"></i> Certifications</h3>
-              <ol style="display:flex; flex-direction:column; gap:0.85rem;">
-                ${f.achievements.certifications.map((c, idx) => `
-                  <li style="line-height:1.6; border-left:3px solid var(--primary-blue); padding-left:1rem;">
-                    <strong>${idx + 1}.</strong> ${c}
-                  </li>
-                `).join('')}
-              </ol>
-            </div>
-          ` : ''}
+          if (!showAwards && !showCertifications && !showFdp && !showConducted) {
+            return `<div class="info-card"><p>No achievements or training data available.</p></div>`;
+          }
 
-          ${showFdp ? `
-            <div class="info-card">
-              <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-school"></i> Faculty Development & Professional Training (FDPT)</h3>
-              <ol style="display:flex; flex-direction:column; gap:0.85rem;">
-                ${f.achievements.fdpAttended.map((f, idx) => `
-                  <li style="line-height:1.6; border-left:3px solid var(--accent-gold); padding-left:1rem;">
-                    <strong>${idx + 1}.</strong> ${f}
-                  </li>
-                `).join('')}
-              </ol>
-            </div>
-          ` : ''}
+          return `
+            <h2 class="subpage-title"><i class="fa-solid fa-trophy"></i> Achievements & Faculty Development</h2>
+            
+            ${showAwards ? `
+              <div class="info-card">
+                <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-award"></i> Awards & Recognitions</h3>
+                <ol style="display:flex; flex-direction:column; gap:0.85rem;">
+                  ${f.achievements.awards.map((a, idx) => `
+                    <li style="line-height:1.6; border-left:3px solid #10B981; padding-left:1rem;">
+                      <strong>${idx + 1}.</strong> ${a}
+                    </li>
+                  `).join('')}
+                </ol>
+              </div>
+            ` : ''}
 
-          ${showConducted ? `
-            <div class="info-card">
-              <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-chalkboard"></i> Workshops & FDPs Conducted</h3>
-              <ol style="display:flex; flex-direction:column; gap:0.85rem;">
-                ${f.achievements.workshopsConducted.map((w, idx) => `
-                  <li style="line-height:1.6; border-left:3px solid #8B5CF6; padding-left:1rem;">
-                    <strong>${idx + 1}.</strong> ${w}
-                  </li>
-                `).join('')}
-              </ol>
-            </div>
-          ` : ''}
-        `;
-      }
+            ${showCertifications ? `
+              <div class="info-card">
+                <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-certificate"></i> Certifications</h3>
+                <ol style="display:flex; flex-direction:column; gap:0.85rem;">
+                  ${f.achievements.certifications.map((c, idx) => `
+                    <li style="line-height:1.6; border-left:3px solid var(--primary-blue); padding-left:1rem;">
+                      <strong>${idx + 1}.</strong> ${c}
+                    </li>
+                  `).join('')}
+                </ol>
+              </div>
+            ` : ''}
 
-      /* TAB 6: PROFESSIONAL ACTIVITIES */
-      case 'activities': {
-        const showMemberships = hasData(f.professionalActivities.memberships);
-        const showReviewer = hasData(f.professionalActivities.reviewerRoles);
-        const showResponsibilities = hasData(f.professionalActivities.responsibilities);
-        const showInteraction = hasData(f.professionalActivities.industryInteraction);
+            ${showFdp ? `
+              <div class="info-card">
+                <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-school"></i> Faculty Development & Professional Training (FDPT)</h3>
+                <ol style="display:flex; flex-direction:column; gap:0.85rem;">
+                  ${f.achievements.fdpAttended.map((f, idx) => `
+                    <li style="line-height:1.6; border-left:3px solid var(--accent-gold); padding-left:1rem;">
+                      <strong>${idx + 1}.</strong> ${f}
+                    </li>
+                  `).join('')}
+                </ol>
+              </div>
+            ` : ''}
 
-        if (!showMemberships && !showReviewer && !showResponsibilities && !showInteraction) {
-          return `<div class="info-card"><p>No professional activities data available.</p></div>`;
+            ${showConducted ? `
+              <div class="info-card">
+                <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-chalkboard"></i> Workshops & FDPs Conducted</h3>
+                <ol style="display:flex; flex-direction:column; gap:0.85rem;">
+                  ${f.achievements.workshopsConducted.map((w, idx) => `
+                    <li style="line-height:1.6; border-left:3px solid #8B5CF6; padding-left:1rem;">
+                      <strong>${idx + 1}.</strong> ${w}
+                    </li>
+                  `).join('')}
+                </ol>
+              </div>
+            ` : ''}
+          `;
         }
 
-        return `
-          <h2 class="subpage-title"><i class="fa-solid fa-briefcase"></i> Professional Activities</h2>
-          
-          ${showMemberships ? `
-            <div class="info-card">
-              <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-address-card"></i> Professional Memberships</h3>
-              <ol style="display:flex; flex-direction:column; gap:0.85rem;">
-                ${f.professionalActivities.memberships.map((m, idx) => `
-                  <li style="line-height:1.6; border-left:3px solid var(--primary-blue); padding-left:1rem;">
-                    <strong>${idx + 1}.</strong> ${m}
-                  </li>
-                `).join('')}
-              </ol>
-            </div>
-          ` : ''}
+        /* TAB 6: PROFESSIONAL ACTIVITIES */
+        case 'activities': {
+          const showMemberships = hasData(f.professionalActivities.memberships);
+          const showReviewer = hasData(f.professionalActivities.reviewerRoles);
+          const showResponsibilities = hasData(f.professionalActivities.responsibilities);
+          const showInteraction = hasData(f.professionalActivities.industryInteraction);
 
-          ${showReviewer ? `
-            <div class="info-card">
-              <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-pen-nib"></i> Reviewer / Editor / Session Chair Roles</h3>
-              <ol style="display:flex; flex-direction:column; gap:0.85rem;">
-                ${f.professionalActivities.reviewerRoles.map((r, idx) => `
-                  <li style="line-height:1.6; border-left:3px solid var(--accent-gold); padding-left:1rem;">
-                    <strong>${idx + 1}.</strong> ${r}
-                  </li>
-                `).join('')}
-              </ol>
-            </div>
-          ` : ''}
+          if (!showMemberships && !showReviewer && !showResponsibilities && !showInteraction) {
+            return `<div class="info-card"><p>No professional activities data available.</p></div>`;
+          }
 
-          ${showResponsibilities ? `
-            <div class="info-card">
-              <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-sitemap"></i> Institutional & Department Responsibilities</h3>
-              <ol style="display:flex; flex-direction:column; gap:0.85rem;">
-                ${f.professionalActivities.responsibilities.map((r, idx) => `
-                  <li style="line-height:1.6; border-left:3px solid #10B981; padding-left:1rem;">
-                    <strong>${idx + 1}.</strong> ${r}
-                  </li>
-                `).join('')}
-              </ol>
-            </div>
-          ` : ''}
+          return `
+            <h2 class="subpage-title"><i class="fa-solid fa-briefcase"></i> Professional Activities</h2>
+            
+            ${showMemberships ? `
+              <div class="info-card">
+                <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-address-card"></i> Professional Memberships</h3>
+                <ol style="display:flex; flex-direction:column; gap:0.85rem;">
+                  ${f.professionalActivities.memberships.map((m, idx) => `
+                    <li style="line-height:1.6; border-left:3px solid var(--primary-blue); padding-left:1rem;">
+                      <strong>${idx + 1}.</strong> ${m}
+                    </li>
+                  `).join('')}
+                </ol>
+              </div>
+            ` : ''}
 
-          ${showInteraction ? `
-            <div class="info-card">
-              <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-handshake"></i> Industry Interaction</h3>
-              <ol style="display:flex; flex-direction:column; gap:0.85rem;">
-                ${f.professionalActivities.industryInteraction.map((i, idx) => `
-                  <li style="line-height:1.6; border-left:3px solid #EC4899; padding-left:1rem;">
-                    <strong>${idx + 1}.</strong> ${i}
-                  </li>
-                `).join('')}
-              </ol>
-            </div>
-          ` : ''}
-        `;
+            ${showReviewer ? `
+              <div class="info-card">
+                <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-pen-nib"></i> Reviewer / Editor / Session Chair Roles</h3>
+                <ol style="display:flex; flex-direction:column; gap:0.85rem;">
+                  ${f.professionalActivities.reviewerRoles.map((r, idx) => `
+                    <li style="line-height:1.6; border-left:3px solid var(--accent-gold); padding-left:1rem;">
+                      <strong>${idx + 1}.</strong> ${r}
+                    </li>
+                  `).join('')}
+                </ol>
+              </div>
+            ` : ''}
+
+            ${showResponsibilities ? `
+              <div class="info-card">
+                <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-sitemap"></i> Institutional & Department Responsibilities</h3>
+                <ol style="display:flex; flex-direction:column; gap:0.85rem;">
+                  ${f.professionalActivities.responsibilities.map((r, idx) => `
+                    <li style="line-height:1.6; border-left:3px solid #10B981; padding-left:1rem;">
+                      <strong>${idx + 1}.</strong> ${r}
+                    </li>
+                  `).join('')}
+                </ol>
+              </div>
+            ` : ''}
+
+            ${showInteraction ? `
+              <div class="info-card">
+                <h3 style="color:var(--primary-navy); margin-bottom:1rem; font-size:1.1rem;"><i class="fa-solid fa-handshake"></i> Industry Interaction</h3>
+                <ol style="display:flex; flex-direction:column; gap:0.85rem;">
+                  ${f.professionalActivities.industryInteraction.map((i, idx) => `
+                    <li style="line-height:1.6; border-left:3px solid #EC4899; padding-left:1rem;">
+                      <strong>${idx + 1}.</strong> ${i}
+                    </li>
+                  `).join('')}
+                </ol>
+              </div>
+            ` : ''}
+          `;
+        }
+
+        default:
+          return `<p>Select a tab above to view details.</p>`;
       }
-
-      default:
-        return `<p>Select a tab above to view details.</p>`;
     }
   }
 
-  /* Shared Institutional Footer Generator with ONLY TCET Crest Logo */
+  /* Shared Institutional Footer Generator with Attribution Link */
   function createInstitutionalFooterHtml() {
     return `
       <footer class="tcet-footer">
@@ -810,22 +1020,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
             <div class="footer-links-column">
               <h4>System Details</h4>
-              <p style="font-size:0.825rem; color:#94A3B8;">Standardized Portfolio Architecture v2.8</p>
+              <p style="font-size:0.825rem; color:#94A3B8;">Standardized Portfolio Architecture v3.0</p>
               <p style="font-size:0.825rem; color:#94A3B8; margin-top:0.3rem;">Integrated 6-Tab Multi-Page System.</p>
             </div>
           </div>
 
           <div class="footer-bottom-bar">
-            <p>© ${new Date().getFullYear()} Thakur College of Engineering & Technology (Autonomous). All Rights Reserved.</p>
+            <p>© ${new Date().getFullYear()} Thakur College of Engineering & Technology (Autonomous). All Rights Reserved. · built by <a href="https://adarsh-builds.vercel.app/" class="footer-attribution-link" target="_blank">&lt;AdarshYadav /&gt;</a></p>
           </div>
         </div>
       </footer>
     `;
   }
 
-  /* Redesigned 70% Faculty / 30% College Footer */
+  /* Redesigned 70% Faculty / 30% College Footer with Attribution Link */
   function createFacultyFooterHtml(f) {
-    const emailsHtml = f.contact.officialEmails ? f.contact.officialEmails.map(e => `<a href="mailto:${e}" style="color:#FFFFFF; text-decoration:underline;">${e}</a>`).join(' / ') : `<a href="mailto:${f.contact.officialEmail}" style="color:#FFFFFF; text-decoration:underline;">${f.contact.officialEmail}</a>`;
+    const emailsHtml = f.contact.officialEmails && f.contact.officialEmails.length > 0 
+      ? f.contact.officialEmails.map(e => `<a href="mailto:${e}" style="color:#FFFFFF; text-decoration:underline;">${e}</a>`).join(' / ') 
+      : (f.contact.officialEmail ? `<a href="mailto:${f.contact.officialEmail}" style="color:#FFFFFF; text-decoration:underline;">${f.contact.officialEmail}</a>` : '-');
     
     return `
       <footer class="tcet-footer" style="padding: 2.5rem 0 1.5rem 0;">
@@ -837,8 +1049,8 @@ document.addEventListener('DOMContentLoaded', () => {
             
             <div style="display:flex; flex-direction:column; gap:0.5rem; font-size:0.85rem; color:#CBD5E1;">
               <p><i class="fa-solid fa-envelope" style="color:var(--accent-gold); width:20px;"></i> <strong>Emails:</strong> ${emailsHtml}</p>
-              <p><i class="fa-solid fa-building" style="color:var(--accent-gold); width:20px;"></i> <strong>Office:</strong> ${f.contact.officeLocation}</p>
-              <p><i class="fa-solid fa-map-location-dot" style="color:var(--accent-gold); width:20px;"></i> <strong>Address:</strong> ${f.contact.address}</p>
+              ${f.contact.officeLocation ? `<p><i class="fa-solid fa-building" style="color:var(--accent-gold); width:20px;"></i> <strong>Office:</strong> ${f.contact.officeLocation}</p>` : ''}
+              ${f.contact.address ? `<p><i class="fa-solid fa-map-location-dot" style="color:var(--accent-gold); width:20px;"></i> <strong>Address:</strong> ${f.contact.address}</p>` : ''}
               
               <!-- Leftover profile links placed here -->
               <div style="margin-top:1rem; display:flex; gap:1rem; align-items:center;">
@@ -861,7 +1073,7 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
         </div>
         <div class="container footer-bottom-bar" style="margin-top:1.5rem; padding-top:1rem;">
-          <p>© ${new Date().getFullYear()} Thakur College of Engineering & Technology (Autonomous). All Rights Reserved.</p>
+          <p>© ${new Date().getFullYear()} Thakur College of Engineering & Technology (Autonomous). All Rights Reserved. · built by <a href="https://adarsh-builds.vercel.app/" class="footer-attribution-link" target="_blank">&lt;AdarshYadav /&gt;</a></p>
         </div>
       </footer>
     `;
@@ -874,6 +1086,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalBody = document.getElementById('modalBody');
     const modalBackdrop = document.getElementById('quickViewModal');
 
+    const highestQual = f.highlights ? f.highlights.highestQualification : (f.education && f.education.length > 0 ? f.education[0].degree : '-');
+    const teachingExp = f.experience.teaching || f.experience.total || '-';
+    const contactEmail = f.contact.officialEmails && f.contact.officialEmails.length > 0 ? f.contact.officialEmails[0] : (f.contact.officialEmail || '');
+
     modalBody.innerHTML = `
       <div style="display:flex; gap:1.25rem; align-items:center; margin-bottom:1.25rem;">
         <img src="${f.basicInfo.profilePhotoUrl}" alt="${f.basicInfo.fullName}" style="width:85px; height:105px; border-radius:8px; object-fit:cover; border:2px solid var(--border-color);">
@@ -881,7 +1097,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <span class="badge badge-scopus">${f.metadata.rankCategory}</span>
           <h3 style="font-family:var(--font-heading); font-size:1.25rem; margin-top:0.2rem; color:var(--primary-navy);">${f.basicInfo.displayTitle}</h3>
           <p style="font-size:0.875rem; font-weight:600; color:var(--primary-blue);">${f.basicInfo.designation}</p>
-          <p style="font-size:0.8rem; color:var(--text-light); margin-top:0.15rem;">Vidwan ID: ${f.contact.vidwanId}</p>
+          ${f.contact.vidwanId && f.contact.vidwanId !== '-' ? `<p style="font-size:0.8rem; color:var(--text-light); margin-top:0.15rem;">Vidwan ID: ${f.contact.vidwanId}</p>` : ''}
         </div>
       </div>
 
@@ -892,16 +1108,16 @@ document.addEventListener('DOMContentLoaded', () => {
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-bottom:1.25rem;">
         <div style="background:var(--bg-slate); border:1px solid var(--border-color); padding:0.75rem; border-radius:8px;">
           <span style="font-size:0.7rem; color:var(--text-light); text-transform:uppercase; font-weight:700;">Highest Qualification</span>
-          <p style="font-weight:700; font-size:0.875rem; color:var(--primary-navy);">${f.highlights ? f.highlights.highestQualification : (f.education.length > 0 ? f.education[0].degree : '-')}</p>
+          <p style="font-weight:700; font-size:0.875rem; color:var(--primary-navy);">${highestQual}</p>
         </div>
         <div style="background:var(--bg-slate); border:1px solid var(--border-color); padding:0.75rem; border-radius:8px;">
-          <span style="font-size:0.7rem; color:var(--text-light); text-transform:uppercase; font-weight:700;">Teaching Experience</span>
-          <p style="font-weight:700; font-size:0.875rem; color:var(--primary-navy);">${f.experience.teaching || '-'}</p>
+          <span style="font-size:0.7rem; color:var(--text-light); text-transform:uppercase; font-weight:700;">Experience</span>
+          <p style="font-weight:700; font-size:0.875rem; color:var(--primary-navy);">${teachingExp}</p>
         </div>
       </div>
 
       <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border-color); padding-top:1rem;">
-        <span style="font-size:0.825rem; color:var(--text-light);"><i class="fa-solid fa-envelope"></i> ${f.contact.officialEmails ? f.contact.officialEmails[0] : f.contact.officialEmail}</span>
+        <span style="font-size:0.825rem; color:var(--text-light);"><i class="fa-solid fa-envelope"></i> ${contactEmail}</span>
         <a href="#portfolio/${f.metadata.id}/profile" class="btn btn-primary" style="width:auto;" onclick="closeModal()">Full Portfolio <i class="fa-solid fa-arrow-right"></i></a>
       </div>
     `;

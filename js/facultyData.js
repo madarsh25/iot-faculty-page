@@ -7,142 +7,209 @@ const facultyData = [
     },
     basicInfo: {
       prefix: "Dr.",
-      fullName: "Sujata Alegavi",
-      displayTitle: "Dr. Sujata Alegavi",
-      designation: "Associate Professor & Head of Department (HOD)",
-      department: "Computer Science & Engineering (Internet of Things)",
+      fullName: "Sujata Sameet Alegavi",
+      displayTitle: "Dr. Sujata Sameet Alegavi",
+      designation: "Associate Professor and HOD",
+      department: "Computer Science and Engineering (IoT)",
       institution: "Thakur College of Engineering & Technology (TCET)",
       campus: "Kandivali (East), Mumbai",
       profilePhotoUrl: "assets/images/sujata_alegavi.jpg",
-      shortBio: "Head of Department (IoT) with over 18.6 years of academic & research leadership. Specializes in Satellite Remote Sensing, Deep Learning, and AI applications."
+      shortBio: "Dr. Sujata Sameet Alegavi is the Head of the Department of B.Tech. Internet of Things (IoT) and an Associate Professor at Thakur College of Engineering & Technology, Mumbai. She holds a Ph.D. in Electronics and Telecommunication and has over 18 years of academic experience. Her research interests include Artificial Intelligence, Deep Learning, Remote Sensing, Computer Vision, Image Processing, and IoT. An IEEE Senior Member and Master Trainer for IoT Software Analyst, she has published numerous Scopus-indexed research papers, authored and edited technical books, secured patents and copyrights, and actively contributes to academic leadership, research, innovation, and outcome-based engineering education."
     },
     contact: {
-      officialEmails: ["sujata.alegavi@thakureducation.org"],
+      officialEmails: ["sujata.alegavi@tcetmumbai.in"],
       officeLocation: "Department of CSE-IoT, A-Block, TCET Campus, Mumbai",
       address: "A-Block, Thakur Educational Campus, Shyamnarayan Thakur Marg, Thakur Village, Kandivali-East, Mumbai-400101, Maharashtra",
       vidwanId: "399359",
       vidwanUrl: "https://tcetmumbai.irins.org/profile/399359",
-      orcidUrl: "https://orcid.org/0000-0002-1234-5678",
-      scopusUrl: "https://www.scopus.com/pages/search/authors?firstName=Sujata&lastName=Alegavi",
-      googleScholarUrl: "https://scholar.google.com",
-      researchGateUrl: "",
-      linkedinUrl: ""
+      orcidUrl: "https://orcid.org/0000-0001-6545-620X",
+      scopusUrl: "https://www.scopus.com/authid/detail.uri?authorId=57208100412",
+      googleScholarUrl: "https://scholar.google.com/citations?hl=en&authuser=1&user=SSskZq0AAAAJ",
+      researchGateUrl: "https://www.researchgate.net/profile/Sujata-Alegavi?ev=hdr_xprf",
+      linkedinUrl: "https://www.linkedin.com/in/dr-sujata-alegavi-dubal-06510a14/",
+      githubUrl: "https://github.com/Sujataalegavi7"
     },
     specializations: [
-      "Remote Sensing & Satellite Imagery",
       "Artificial Intelligence & Deep Learning",
-      "Video & Image Processing",
-      "Communication Engineering"
+      "Internet of Things (IoT) & Industrial IoT",
+      "Remote Sensing & Computer Vision",
+      "Image Processing & Pattern Recognition",
+      "Machine Learning & Data Analytics"
     ],
     education: [
       {
-        degree: "Ph.D. (Technology)",
-        specialization: "Electronics & Telecommunication Engineering",
-        institution: "University of Mumbai",
+        degree: "Ph.D",
+        specialization: "Electronics and Telecommunication",
+        institution: "Mumbai University",
         year: "2021"
       },
       {
-        degree: "PGDBA",
-        specialization: "Finance",
-        institution: "Symbiosis Institute of Business Management (SIBM), Pune",
-        year: "2012"
-      },
-      {
         degree: "M.E.",
-        specialization: "Electronics & Telecommunication Engineering",
-        institution: "University of Mumbai",
+        specialization: "Electronics and Telecommunication",
+        institution: "Mumbai University",
         year: "2010"
       },
       {
-        degree: "B.E.",
-        specialization: "Electronics & Telecommunication Engineering",
-        institution: "University of Mumbai",
-        year: ""
+        degree: "B.E",
+        specialization: "Electronics and Telecommunication",
+        institution: "Mumbai University",
+        year: "2006"
       }
     ],
     experience: {
-      teaching: "18.6 Years",
-      industry: "-",
-      research: "-",
-      dateOfJoiningTCET: ""
+      teaching: "19 years 2 months",
+      industry: "6 months",
+      research: "10 years",
+      dateOfJoiningTCET: "27 November 2007"
     },
     teaching: {
-      currentCourses: [],
+      currentCourses: ["Data Science and Applications"],
       coursesTaught: [
-        "Remote Sensing & Satellite Image Processing",
-        "Deep Learning & Neural Networks",
-        "Artificial Intelligence",
-        "Communication Engineering",
-        "Advanced Signal & Video Processing"
+        "Data Science and Applications",
+        "Reinforcement Learning",
+        "Deep Learning",
+        "Database Management System",
+        "Natural Language Processing",
+        "Artificial Intelligence and Machine Learning"
       ],
       innovativePractices: [
-        "Flipped classroom models and interactive slide decks.",
-        "Hands-on session using LTspice XVII for circuit simulation.",
-        "Problem-based learning on real-world remote sensing dataset."
+        "Industry-integrated teaching through expert sessions and real-world case studies",
+        "Research-oriented learning through mini-projects and publication mentoring",
+        "Flipped classroom with blended learning methodologies",
+        "Active learning using collaborative problem-solving and peer learning",
+        "Integration of emerging technologies (AI, ML, Deep Learning, Computer Vision, IoT) into classroom instruction",
+        "Mentoring students for innovation, patents, hackathons, and research publications"
       ]
     },
     research: {
       interests: [
-        "Satellite Remote Sensing",
-        "Deep Learning",
-        "Artificial Intelligence"
+        "Artificial Intelligence (AI)",
+        "Machine Learning & Deep Learning",
+        "Internet of Things (IoT) & Industrial IoT",
+        "Remote Sensing & Hyperspectral Image Processing",
+        "Computer Vision & Image Processing",
+        "Pattern Recognition & Image Retrieval",
+        "Geospatial Data Analytics",
+        "Healthcare AI & Intelligent Systems",
+        "Explainable AI and Data Analytics",
+        "Smart and Sustainable Systems"
       ],
       journals: [
-        "S. S. Alegavi, R.R. Sedamkar (2019). “Transfer Learning for Classification of Hyperspectral Images using VGG & VGG-VDD Pretrained Networks”, International Journal of Advanced Science and Technology (IJAST), Vol. 28, No. 20, pp. 1290-1303.",
-        "Sujata Alegavi, R.R. Sedamkar (2019). “Hyper Spectral Image Classification using Multi Labelled, Multi-Scale and Multi-Angle CNN with MS-MA BT Algorithm”, International Journal of Innovative Technology and Exploring Engineering (IJITEE), Vol. 8, Issue 9S3, pp. 1229-1235."
+        "Total Journal Publications: 27",
+        "Scopus Indexed Journals: 18",
+        "SCI/SCIE Journals: 2",
+        "ESCI Indexed Journals: 1",
+        "IEEE Transactions: 1",
+        "Springer Journals: Multiple publications",
+        "MDPI Journals: 1 publication",
+        "Frontiers Journals: Multiple publications",
+        "Elsevier Indexed Journals: 3 publications",
+        "UGC CARE Journals: Multiple publications"
       ],
       conferences: [
-        "S. S. Alegavi, R.R. Sedamkar (2020). “Classification of Hybrid Multiscaled Remote Sensing Scene using Pretrained Convolutional Neural Networks”, Proc. Springer Advances in Intelligent Systems and Computing Series (AISC 1108), ICCVBIC 2019, pp. 1-10.",
-        "S. S. Alegavi, R.R. Sedamkar (2018). “Improving Classification Error for Mixed Pixels in Satellite Images using Soft Thresholding Technique”, 2nd IEEE International Conference on Intelligent Computing and Control Systems (ICICCS), IEEE Digital Library, DOI: 10.1109/ICCONS.2018.8663002."
+        "Total Conference Publications: 16",
+        "IEEE Xplore Publications: 6",
+        "Springer Conference Proceedings: 1",
+        "AIP Conference Proceedings (Scopus Indexed): 3",
+        "IET Digital Library Publications: 2",
+        "ACM Conference Proceedings: 2",
+        "Scopus Indexed Conference Proceedings: 3"
       ],
       books: [
-        "Sujata Alegavi, R.R. Sedamkar (2021). “Multi-Scale Rotation Invariant Local Features Extraction for Hyperspectral Image Classification using CNN”, Computing and Communication Engineering in Real-Time Application Development, Apple Academic Press Book Chapter."
+        "Books Authored: 5",
+        "Books Edited: 4",
+        "Book Chapters Published: 7 (Scopus Indexed Book Chapters: 4, CRC Press: 1, Springer: 2, Apple Academic Press: 1, IGI Global: 2)"
       ],
       patents: [
-        "A Hybrid Method for Deep ENN with MultiScale Rotation Invariance Features For Hyperspectral Image Classification and Retrieval, Indian Patent Office, Status: Published, 2020."
+        "Total Patents: 8 (Indian Applications Published: 3, Indian Granted: 1, International Granted: 3 [South Africa: 2, Germany: 1], Indian Design Patents Granted: 2)"
       ],
-      copyrights: [],
+      copyrights: [
+        "Total Copyrights: 10 (Copyrights Granted: 8, Copyrights Filed/Under Process: 2)"
+      ],
       fundedProjects: [
-        "NVIDIA Titan XP GPU Research Grant — Principal Investigator, NVIDIA Corporation, ₹1,25,000, 2019. Awarded hardware to accelerate Ph.D. deep learning research."
+        "NVIDIA Research Grant – Titan XP GPU for Ph.D. research on Efficient Retrieval of Remotely Sensed Images Using Hybrid Approach.",
+        "IEEE Sponsored Faculty Development Program (FDP) on Recent Trends in Integration of Smart Systems (Coordinator).",
+        "Total Grant Proposals Applied: 11 (SERB, DST, IKS, NVIDIA)"
       ],
-      consultancy: []
+      consultancy: [
+        "Delivered a training session on Database Management Systems for Central Bank of India IT Officers.",
+        "Conducted a session on Introduction to Artificial Intelligence and Machine Learning for Indian Air Force officials.",
+        "Conducted 8 hrs of session under NASSCOM for 'IoT Software Analyst'"
+      ]
     },
     studentMentoring: {
-      projectsGuided: [
-        "LTspice XVII Circuit Simulation Projects",
-        "Hyperspectral Scene Classification systems",
-        "Deep learning based object recognition models"
-      ],
-      teamsMentored: []
+      projectsGuided: ["UG projects guided 20+", "Ph.D. project guided 2"],
+      teamsMentored: ["Aavishkaar - 2", "Dipex - 2", "SIH - 3"]
     },
     achievements: {
       awards: [
-        "NVIDIA Titan XP GPU Research Grant recipient - 2019"
+        "IEEE Senior Member (IEEE Bombay Section)",
+        "Master Trainer for the Qualification Pack of IoT Software Analyst (SSC/Q8205) under NSQF Level 5.5",
+        "Reviewer for Springer Nature Journal",
+        "Reviewer for GIScience & Remote Sensing",
+        "Reviewer for IDT (Scopus Indexed Journal) and CMT",
+        "Received NVIDIA Titan XP GPU Research Grant for Ph.D. research",
+        "Received ISRO Space Tutor recognition for the institution",
+        "4th Prize in the Nationwide Poster Competition on Explainable AI"
       ],
       certifications: [
-        "IRQS ISO 9001:2015 Quality Management System Lead Auditor Certification",
-        "IIT Bombay e-Yantra Robotics & Embedded Workshop Certification"
+        "Microsoft Certified Solution Developer (.NET – C# Track)",
+        "Microsoft Certified Azure AI Fundamentals",
+        "Tableau Certification (Simplilearn)",
+        "Microsoft, SAP & AICTE TechSaksham Certification – AI Evolution: From Foundation to Generative AI",
+        "IIRS–ISRO Certification – Geodata Processing using Python",
+        "Certified Internal Auditor for ISO 9001:2008",
+        "NITTT (AICTE) Teacher Training Program – Modules 1 to 8",
+        "National Intellectual Property Awareness Mission (NIPAM) Certification"
       ],
-      fdpAttended: [],
+      fdpAttended: [
+        "20+ Faculty Development Programs (FDPs), Short-Term Training Programs (STTPs), and Professional Development Courses attended in emerging technologies and pedagogy."
+      ],
       workshopsConducted: [
-        "LTspice XVII Circuit Simulation Workshop for Students",
-        "Faculty Development Session on Management Skills"
+        "IEEE Sponsored Faculty Development Program on 'Recent Trends in Integration of Smart Systems' – Coordinator and Organizer (2022).",
+        "Conducted Database Management Systems training for B.Voc. students (36 hours).",
+        "Delivered a Database Management Systems session for Central Bank of India IT Officers.",
+        "Conducted an Introduction to AI & ML session for Indian Air Force officials.",
+        "Delivered an orientation session on Digital Image Processing and Computer Vision for Government Polytechnic students"
       ]
     },
     professionalActivities: {
-      memberships: [],
-      reviewerRoles: [],
+      memberships: [
+        "IEEE Senior Member (IEEE Bombay Section)",
+        "Association for Computing Machinery (ACM) – Member",
+        "Indian Society for Technical Education (ISTE) – Life Member",
+        "International Institute of Engineering and Technology Association (IIETA) – Member",
+        "Institution of Engineers (India) [IEI] – Associate Member"
+      ],
+      reviewerRoles: [
+        "Reviewer, Springer Nature Journal",
+        "Reviewer, GIScience & Remote Sensing",
+        "Reviewer, Intelligent Decision Technologies (IDT) Journal (Scopus Indexed)",
+        "Reviewer, Microsoft CMT Conference Management System",
+        "Editor, Industrial Internet of Things for Responsible Technology (CRC Press)",
+        "Editor, AIP Conference Proceedings – International Conference on Communications, Computing and Data Security (ICCCDS-2022)",
+        "Editor, Proceedings of ICWET, ICWAME, ICWCCV, and Multicon International Conferences",
+        "Resource Person for sessions on Database Management Systems, Artificial Intelligence & Machine Learning, and Digital Image Processing & Computer Vision for industry and academic organizations."
+      ],
       responsibilities: [
-        "Head of Department (HOD) — Department of CSE-IoT, TCET",
-        "Founder & Faculty Convener — TEDxTCET (2018 - Present)",
-        "Founder — Astronomy Club of TCET (2022 - Present)",
-        "ISRO Space Tutor SPOC — ISRO Educational Outreach Program",
-        "Secretary & Core Committee Member — Multicon-W International Conference",
-        "Associate Coordinator — NationWide RoadShow on Vega Processors (MeITy, 2022)",
-        "Initiator — Center of Excellence (COE) with CDAC (2023)"
+        "Head of Department (HOD) – B.Tech. Internet of Things (IoT)",
+        "Coordinator – IEEE Sponsored Faculty Development Program",
+        "Core Committee Member – Multicon International Conference (since inception)",
+        "Organizing Secretary – Multicon W 2024 & 2025",
+        "Convenor – ICCCDS 2025 International Conference",
+        "Founder & Coordinator – TEDxTCET",
+        "Founder & Coordinator – Astronomy Club, TCET",
+        "Associate Coordinator – Nationwide Roadshow on Digital India RISC-V VEGA Processors (MeitY)",
+        "Coordinator – AIoT Centre of Excellence (CoE) in collaboration with Digitoads Pvt. Ltd.",
+        "Facilitated Institutional MoU with C-DAC and secured ISRO Space Tutor for the college."
       ],
       industryInteraction: [
-        "Initiator for C-DAC Center of Excellence setup at TCET."
+        "Delivered Database Management Systems training for Central Bank of India IT Officers.",
+        "Conducted an expert session on Artificial Intelligence and Machine Learning for Indian Air Force officials.",
+        "Established an AIoT Centre of Excellence (CoE) in collaboration with Digitoads Pvt. Ltd.",
+        "Organized industry training on AIoT kits in collaboration with Digitoads Pvt. Ltd.",
+        "Signed an MoU with C-DAC to strengthen industry–academia collaboration.",
+        "Served as Associate Coordinator for the Digital India RISC-V VEGA Processors Roadshow under MeitY"
       ]
     }
   },
@@ -173,7 +240,8 @@ const facultyData = [
       scopusUrl: "",
       googleScholarUrl: "",
       researchGateUrl: "",
-      linkedinUrl: "https://linkedin.com/in/sanjeev-ghosh-25171692"
+      linkedinUrl: "https://linkedin.com/in/sanjeev-ghosh-25171692",
+      githubUrl: ""
     },
     specializations: [
       "Wireless Communication",
@@ -299,7 +367,8 @@ const facultyData = [
       scopusUrl: "https://www.scopus.com/pages/search/authors?firstName=Sunil&lastName=Khatri",
       googleScholarUrl: "https://scholar.google.co.in/citations?user=6PSE8o8AAAAJ&hl=en",
       researchGateUrl: "https://www.researchgate.net/profile/Sunil-Khatri-5",
-      linkedinUrl: "https://www.linkedin.com/in/khatri-sunil/"
+      linkedinUrl: "https://www.linkedin.com/in/khatri-sunil/",
+      githubUrl: ""
     },
     specializations: [
       "Internet of Things (IoT)",
@@ -518,6 +587,546 @@ const facultyData = [
         "OutSystems Faculty Development Programme – Industry-oriented training on the OutSystems low-code development platform."
       ]
     }
+  },
+  {
+    metadata: {
+      id: "priyanka-musale",
+      hierarchyOrder: 4,
+      rankCategory: "Assistant Professor"
+    },
+    basicInfo: {
+      prefix: "Mrs.",
+      fullName: "Priyanka Nandkishor Musale",
+      displayTitle: "Mrs. Priyanka Nandkishor Musale",
+      designation: "Assistant Professor",
+      department: "Internet of Things",
+      institution: "Thakur College of Engineering & Technology (TCET)",
+      campus: "Kandivali (East), Mumbai",
+      profilePhotoUrl: "assets/images/priyanka_musale.png",
+      shortBio: "Priyanka Musale is an Assistant Professor in the Department of Internet of Things (IoT). She serves as the Department Training & Placement Coordinator, Program Coordinator–III, Alumni Coordinator, Outhouse Internship Coordinator, Teacher Guardian, and a member of the Anti-Ragging Committee. She is actively involved in academic planning, student mentoring, industry collaboration, internships, alumni engagement, and placement initiatives. Her areas of interest include Internet of Things, Embedded Systems, Artificial Intelligence, and engineering education. She is committed to fostering industry-ready graduates through outcome-based education, research, and holistic student development."
+    },
+    contact: {
+      officialEmails: ["priyanka.pekhale@tcetmumbai.in"],
+      officeLocation: "Department of CSE-IoT, TCET Campus, Mumbai",
+      address: "Thakur Educational Campus, Shyamnarayan Thakur Marg, Thakur Village, Kandivali-East, Mumbai-400101, Maharashtra",
+      vidwanId: "-",
+      vidwanUrl: "",
+      orcidUrl: "",
+      scopusUrl: "",
+      googleScholarUrl: "",
+      researchGateUrl: "",
+      linkedinUrl: "",
+      githubUrl: ""
+    },
+    specializations: [
+      "Artificial Intelligence & Machine Learning",
+      "Embedded Systems",
+      "Power Management"
+    ],
+    education: [
+      {
+        degree: "M.E",
+        specialization: "Electrical",
+        institution: "Pune University",
+        year: "2013"
+      },
+      {
+        degree: "B.E",
+        specialization: "Electrical",
+        institution: "Pune University",
+        year: "2010"
+      }
+    ],
+    experience: {
+      teaching: "13 Years",
+      industry: "-",
+      research: "-",
+      dateOfJoiningTCET: "21/03/2022"
+    },
+    teaching: {
+      currentCourses: ["Power Management in IoT Devices - Sem VII - 2026-2027"],
+      coursesTaught: [
+        "Embedded Systems Design and Applications - Sem III - 2025-2026",
+        "Foundation of Data Science - Sem VII - 2024-2025",
+        "Advanced Data Science - Sem VIII - 2023-2024",
+        "Data Structures - Sem III - 2024-2025",
+        "Power Management in IoT Devices - Sem VII - 2026-2027",
+        "Universal Human Values - Sem III - 2025-2026"
+      ],
+      innovativePractices: [
+        "Implement project-based and problem-based learning to enhance practical understanding.",
+        "Integrate real-world case studies and industry applications into classroom teaching.",
+        "Use simulation tools, IoT development platforms, and hands-on laboratory sessions for experiential learning.",
+        "Conduct flipped classroom activities through pre-class videos and in-class discussions.",
+        "Incorporate quizzes, peer learning, role plays, and group presentations to improve student engagement.",
+        "Promote outcome-based education (OBE) through CO-aligned assessments and continuous feedback.",
+        "Encourage mini-projects, hackathons, and innovation-driven activities to develop problem-solving and teamwork skills.",
+        "Utilize digital learning platforms such as Google Classroom, LMS, Kahoot, Mentimeter, and online coding/simulation tools for interactive teaching."
+      ]
+    },
+    research: {
+      interests: [
+        "Internet of Things (IoT)",
+        "Artificial Intelligence & Machine Learning",
+        "Embedded Systems design",
+        "Power Management in devices"
+      ],
+      journals: [],
+      conferences: [],
+      books: [],
+      patents: [],
+      copyrights: [],
+      fundedProjects: [],
+      consultancy: []
+    },
+    studentMentoring: {
+      projectsGuided: [],
+      teamsMentored: []
+    },
+    achievements: {
+      awards: [],
+      certifications: [],
+      fdpAttended: [],
+      workshopsConducted: []
+    },
+    professionalActivities: {
+      memberships: [],
+      reviewerRoles: [],
+      responsibilities: [
+        "Department Training & Placement Coordinator",
+        "Program Coordinator–III",
+        "Alumni Coordinator",
+        "Outhouse Internship Coordinator",
+        "Teacher Guardian",
+        "Anti-Ragging Committee Member"
+      ],
+      industryInteraction: []
+    }
+  },
+  {
+    metadata: {
+      id: "amit-maurya",
+      hierarchyOrder: 5,
+      rankCategory: "Assistant Professor"
+    },
+    basicInfo: {
+      prefix: "Mr.",
+      fullName: "Amit Rakesh Maurya",
+      displayTitle: "Mr. Amit Rakesh Maurya",
+      designation: "Deputy Head of Department & Assistant Professor",
+      department: "Computer Science Engineering - (IoT)",
+      institution: "Thakur College of Engineering & Technology (TCET)",
+      campus: "Kandivali (East), Mumbai",
+      profilePhotoUrl: "assets/images/amit_maurya.png",
+      shortBio: "Mr. Amit Rakesh Maurya is the Deputy Head of the Department (Dy. HoD) and Assistant Professor in the Department of Internet of Things at Thakur College of Engineering and Technology, Mumbai. He has over 13 years of teaching experience and specializes in Internet of Things, Wireless Communication, Image Processing, Signal Processing, and Embedded Systems. His research focuses on Edge AI, Intelligent IoT Systems, Computer Vision, and Smart Sustainable Technologies. He has published research papers in reputed IEEE conferences and journals, contributed a Scopus-indexed book chapter, actively mentors student projects, and is involved in research, accreditation, and academic quality initiatives."
+    },
+    contact: {
+      officialEmails: ["amit.maurya@tcetmumbai.in"],
+      officeLocation: "Department of CSE-IoT, TCET Campus, Mumbai",
+      address: "Thakur Educational Campus, Shyamnarayan Thakur Marg, Thakur Village, Kandivali-East, Mumbai-400101, Maharashtra",
+      vidwanId: "585057",
+      vidwanUrl: "https://vidwan.inflibnet.ac.in/profile/585057",
+      orcidUrl: "https://orcid.org/0009-0004-5759-6850",
+      scopusUrl: "https://www.scopus.com/authid/detail.uri?authorId=60193514600",
+      googleScholarUrl: "https://scholar.google.com/citations?user=_IyPGy8AAAAJ&hl=en&authuser=1",
+      researchGateUrl: "",
+      linkedinUrl: "https://www.linkedin.com/in/amit-maurya-a0b44877",
+      githubUrl: ""
+    },
+    specializations: [
+      "Internet of Things (IoT)",
+      "Wireless Communication",
+      "Image Processing",
+      "Signal Processing"
+    ],
+    education: [
+      {
+        degree: "Master of Engineering",
+        specialization: "Electronics & Telecommunication Engineering",
+        institution: "Vidyalankar Institute of Technology (University of Mumbai)",
+        year: "2014"
+      },
+      {
+        degree: "Bachelor of Engineering",
+        specialization: "Konkan Gyanpeeth College of Engineering (University of Mumbai)",
+        year: "2012"
+      }
+    ],
+    experience: {
+      teaching: "13 Years",
+      industry: "Nil",
+      research: "10+ Years",
+      dateOfJoiningTCET: "11/07/2024"
+    },
+    teaching: {
+      currentCourses: [
+        "Wireless Sensor Network",
+        "Computer Communication Network",
+        "5-G Technology",
+        "Data Science & Applications",
+        "Internet Programming",
+        "Mobile Application Development"
+      ],
+      coursesTaught: [
+        "Wireless Sensor Network",
+        "Computer Communication Network",
+        "5-G Technology",
+        "Data Science & Applications",
+        "Internet Programming",
+        "Mobile Application Development"
+      ],
+      innovativePractices: [
+        "Mini-projects using IoT hardware platforms",
+        "Industry-oriented problem statements",
+        "Project-Based Learning (PBL)",
+        "Research-Based Learning (RBL)",
+        "Activity-Based Learning (ABL)"
+      ]
+    },
+    research: {
+      interests: [
+        "Wireless Communication",
+        "Image Processing",
+        "Signal Processing",
+        "Internet of Things (IoT)"
+      ],
+      journals: [
+        "T. Patkar, K. More, S. Lad, R. Tanawade, and A. Maurya, 'IoT Based Aquaculture,' IRJET, Vol. 7, No. 5, pp. 7051–7055, May 2020.",
+        "S. Khale, A. Sathe, R. Salunke, S. Nathan, and A. Maurya, 'Smart Mirror,' IJRTE, Vol. 8, No. 2S11, pp. 925–929, Sep. 2019.",
+        "S. Sonar, S. Pisal, A. Mhatre, and A. R. Maurya, 'A Novel Approach for Low Power, Energy-Efficient Automation System,' Journal of Applied Engineering and Technologies, Apr. 2017.",
+        "S. S. Thakur, H. A. Rajale, T. P. Page, and A. R. Maurya, 'Design Process for Electronic System,' JETIR, Vol. 6, Issue 7, Jul. 2019."
+      ],
+      conferences: [
+        "P. Yadav, M. Uikey, P. Lonkar, S. Kayande, and A. R. Maurya, 'Sorting of Objects Using Image Processing,' IEEE INOCON 2020.",
+        "A. R. Maurya, M. Sonkusare, A. Raut, D. Tamhane, and D. Palase, 'Surveillance Robot with Human Detection,' ICICCT 2018.",
+        "A. R. Maurya and D. S. Bade, 'Design of a Wireless Health Monitoring System Based on M2M Communication,' ICCICCT 2014."
+      ],
+      books: [
+        "E. R. Desai and A. R. Maurya, 'An Introduction to Responsible Technology in Industrial Internet of Things,' in Industrial Internet of Things for Responsible Technology, CRC Press, 2025."
+      ],
+      patents: [],
+      copyrights: [],
+      fundedProjects: [
+        "Project Collaborator: AI-Driven Edge-to-Cloud Road Hazard Perception and Safety Assurance Framework for Autonomous Vehicles using NVIDIA Isaac, DeepStream and Jetson Platforms (NVIDIA Academic Grant Programme)"
+      ],
+      consultancy: []
+    },
+    studentMentoring: {
+      projectsGuided: ["10+ BE projects guided"],
+      teamsMentored: [
+        "Mentor, Accident Prevention and Detection System, Tantravihar Project Competition (Preliminary Round), 2022.",
+        "Mentor, Accident Prevention and Detection System, Tantravihar Project Competition (Final Round), 2022.",
+        "Guide, KNOCK IT – Low Power Energy Efficient Automation System based on Knocking Pattern, Consolation Prize, Tantravihar Project Competition, 2017."
+      ]
+    },
+    achievements: {
+      awards: [
+        "Best Research Paper Presentation Award, ICMESS-2019",
+        "First Rank Holder throughout the M.E. programme",
+        "GATE 2025 Qualified",
+        "Certificate of Appreciation for Advanced Excel training for Non-Teaching Staff, 2019",
+        "Certificate of Appreciation for organizing DBMS STTP under IETE, 2020",
+        "Certificate of Appreciation for organizing PCB Designing workshop under IETE, 2019",
+        "Project Guide for KNOCK IT - Consolation Prize at Tantravihar 2017"
+      ],
+      certifications: [
+        "NITTT Mandatory Teacher Training Programme - Successfully completed all 8 Modules, Feb 2026",
+        "ISRO START Programme - Scientific Observations from Space, Grade A+, 2026",
+        "AI Powered IoT Training, STM32 AIoT Developer Kit, June 2025",
+        "MATLAB Onramp",
+        "Python Developer Certification, 2021",
+        "University of Mumbai PET Qualified, 2017"
+      ],
+      fdpAttended: [
+        "ATAL FDP on Intelligent Connectivity: AI-Driven Evolution in Next-Generation Communication Networks, 2025",
+        "FDP on Application of Discrete Mathematics, 2014",
+        "ISTE Approved STTP on IoT Development and Cyber Security Analytics, TCET, 2026",
+        "ISTE Approved STTP on Industrial Robotics and Automation Systems, TCET, 2025",
+        "Short Term Training Programme on Simulation Software, IETE, 2018",
+        "Six-Day Hands-on Training on AI Powered IoT with STM32 Developer Kit, 2025",
+        "One-Day Online Workshop on Aerosols: Measurement, Retrieval and Impacts, IIRS ISRO, 2025",
+        "Advanced BSNL Telecom Transmission Technologies Training, Thane, 2019",
+        "One-Day Workshop on Awareness in Emerging Domains of Computer & IT, 2018",
+        "One-Day Workshop on NI LabVIEW and Data Acquisition System, 2016",
+        "Technical Programme on Measurement Techniques on Advanced Communications, Tektronix, 2016",
+        "Ham Radio Workshop, IEEE Bombay Section, 2015",
+        "Mentor Training Programme, 2014",
+        "Dr. M. R. Srinivasan Memorial Lecture on India's Nuclear Energy Mission, 2026"
+      ],
+      workshopsConducted: [
+        "Resource person for workshop, 'Reinventing Evaluation Methods for Formative Assessment: Group Discussion'",
+        "Organizer, Three-Day Workshop on 'Database Management System' under IETE, 2020",
+        "Resource Person, Training Programme on 'Advanced Excel', 2019",
+        "Organizer, Three-Day Workshop on 'PCB Designing' under IETE, 2019"
+      ]
+    },
+    professionalActivities: {
+      memberships: [],
+      reviewerRoles: [
+        "Reviewer for 5th IEEE International Conference on Computer Vision and Machine Intelligence.",
+        "Resource Person, Training Programme on 'Advanced Excel' for Non-Teaching Staff, 2019",
+        "Organizer, Three-Day Workshop on 'Database Management System', 2020",
+        "Organizer, Three-Day Workshop on 'PCB Designing', 2019",
+        "Organizing Committee Member, STTP on Fundamentals of Effective Teaching and Learning, 2015"
+      ],
+      responsibilities: [
+        "Deputy Head of Department (Dy. HoD), Department of Internet of Things.",
+        "Process In-Charge, Research Publications, Consultancy, Grants & IPR.",
+        "Process In-Charge, Research & Development, Entrepreneurship Development & Innovation Cell.",
+        "Process In-Charge, Quality Assurance & Accreditation (NBA, NAAC, IQAC).",
+        "Coordinator, Department Website Management.",
+        "Coordinator, ERP Management.",
+        "Coordinator, Research & Development Activities.",
+        "Coordinator, Intellectual Property Rights (IPR) and Publications.",
+        "Coordinator, Student, Faculty and Institute Feedback.",
+        "Coordinator, Extra-Curricular and Sports Activities.",
+        "Member, Student Grievance Redressal Committee.",
+        "Teacher Guardian (Faculty Mentor)."
+      ],
+      industryInteraction: [
+        "Project Collaborator for NVIDIA Academic Grant Proposal on AI-driven Road Hazard Perception.",
+        "Mentoring industry-oriented undergraduate projects in IoT, Embedded Systems and AI.",
+        "Facilitating research collaborations with industry for emerging technologies.",
+        "Coordinating technical seminars, expert talks and industry interaction programmes.",
+        "Promoting innovation, entrepreneurship and technology transfer within the department."
+      ]
+    }
+  },
+  {
+    metadata: {
+      id: "ekta-desai",
+      hierarchyOrder: 6,
+      rankCategory: "Assistant Professor"
+    },
+    basicInfo: {
+      prefix: "Mrs.",
+      fullName: "Ekta Desai",
+      displayTitle: "Mrs. Ekta Desai",
+      designation: "Assistant Professor",
+      department: "Computer Science & Engineering (IoT)",
+      institution: "Thakur College of Engineering & Technology (TCET)",
+      campus: "Kandivali (East), Mumbai",
+      profilePhotoUrl: "assets/images/ekta_desai.png",
+      shortBio: "Ekta Desai is an Assistant Professor in the Department of Computer Science & Engineering (IoT) at Thakur College of Engineering and Technology, Mumbai, with 14 years of teaching experience. She is pursuing a Ph.D. at IIIT Vadodara. Her teaching spans Digital Systems, Communication Systems in IoT, and IoT Device Programming, Power Electronics and drives. She has co-authored IEEE conference papers and a book chapter, served as a reviewer for ICECCME 2026, and coordinated an ISTE-approved STTP on IoT and Cyber Security Analytics."
+    },
+    contact: {
+      officialEmails: ["ekta.desai@tcetmumbai.in"],
+      officeLocation: "Department of CSE-IoT, TCET Campus, Mumbai",
+      address: "Thakur Educational Campus, Shyamnarayan Thakur Marg, Thakur Village, Kandivali-East, Mumbai-400101, Maharashtra",
+      vidwanId: "511694",
+      vidwanUrl: "https://vidwan.inflibnet.ac.in/profile/511694",
+      orcidUrl: "https://orcid.org/0000-0002-6778-591X",
+      scopusUrl: "",
+      googleScholarUrl: "https://scholar.google.com/citations?user=BrlrUUwAAAAJ&hl=en",
+      researchGateUrl: "",
+      linkedinUrl: "https://www.linkedin.com/in/ekta-desai-07a0561bb/",
+      githubUrl: ""
+    },
+    specializations: [
+      "Power electronics and drives",
+      "Internet of Things",
+      "Electrical Vehicle Systems"
+    ],
+    education: [
+      {
+        degree: "Ph.D",
+        specialization: "Computer Science Engineering",
+        institution: "Indian Institute of Information Technology, Vadodara",
+        year: "Pursuing till date"
+      },
+      {
+        degree: "AICTE QIP PG Certification",
+        specialization: "AI",
+        institution: "Indian Institute of Information Technology, Vadodara",
+        year: "Dec 2024"
+      },
+      {
+        degree: "ME",
+        specialization: "Power Electronics & Drives",
+        institution: "Gujarat Technological University",
+        year: "2013"
+      },
+      {
+        degree: "BE",
+        specialization: "Electrical Engineering",
+        institution: "Veer Narmad South Gujarat University",
+        year: "2008"
+      }
+    ],
+    experience: {
+      teaching: "15 years",
+      industry: "-",
+      research: "Doctoral research (2025–present) at IIIT Vadodara on trajectory planning for UAV/UGV systems. Co-author on multiple IEEE conference papers and book chapters",
+      dateOfJoiningTCET: "11/11/2022"
+    },
+    teaching: {
+      currentCourses: ["Digital systems and Computer Architecture"],
+      coursesTaught: [
+        "Introduction to IoT applications",
+        "IoT Devices and Programming Integration"
+      ],
+      innovativePractices: [
+        "Developed complete lab manuals, Logisim-based guides, and humanized lecture presentations for the B.Tech IoT semester.",
+        "Coordinated a 5-day hands-on Arduino workshop for first-year students (Multicon-24).",
+        "Conducted a 2-week in-house internship on Cloud Application Development for first-year students.",
+        "Designed a Grade 6 school design-thinking session on a village water problem (outreach)."
+      ]
+    },
+    research: {
+      interests: ["Electrical Vehicle", "charging aware UAVs, UGV s"],
+      journals: [],
+      conferences: [
+        '"Comparative analysis of multilevel inverter topologies for photovoltaic system", NuiCone (IEEE), Dec 2012',
+        '"Comparative study of Multilevel Inverters used in PV system", ICHSTE Multicon 2023, TCET Mumbai, Feb 2023',
+        '"Automatic Attendance Monitoring System for Students", ICHSTE Multicon 2023, TCET Mumbai, Feb 2023',
+        '"Load Flow Analysis of 4.16 KV bus system Using ETAP", ICHSTE Multicon 2024, TCET Mumbai, Feb 2024',
+        '"Cross city Solar Power Prediction and ML Model Comparison", J. Gomes, J. Patel, E. Desai, IEEE IGARSS, Aug 2025',
+        '"Asymmetrical multilevel inverter topologies for PV system", NCRAES\'15 (national conference), May 2015'
+      ],
+      books: [
+        'An Introduction to Responsible Technology in Industrial Internet of Things, in Industrial Internet of Things for Responsible Technology, CRC Press.'
+      ],
+      patents: [],
+      copyrights: [],
+      fundedProjects: [],
+      consultancy: []
+    },
+    studentMentoring: {
+      projectsGuided: ["10+ final-year B.E. projects guided"],
+      teamsMentored: []
+    },
+    achievements: {
+      awards: [
+        'Award of Excellence, CGPIT, UTU, Bardoli, Surat — March 2016'
+      ],
+      certifications: [
+        "Fundamentals of Deep Learning, NVIDIA, 11 Oct 2024",
+        "Foundation-level IA Training, Innovation Cell & AICTE, 2024-25",
+        "AICTE-QIP on Artificial Intelligence, IIIT Vadodara, 30 Jun to 31 Dec 2024",
+        "Electrical Transient Analyzer Programme (ETAP), ELTP Institute, Feb 2024",
+        "NEP Orientation & Sensitization Program, UGC-NIEPA New Delhi, 3–12 Jun 2024",
+        '"Internet of Things" (80% score), NPTEL-AICTE',
+        '"Introduction to Research" (with distinction), NPTEL, Dec 2019',
+        "Vehicle Dynamics & Electrical Motor Drives, NPTEL, SWAYAM, April 2025",
+        "Introduction to Machine Learning, NPTEL, SWAYAM, April 2025"
+      ],
+      fdpAttended: [
+        "FDP on Energy Efficient & Decarbonisation Technologies, SKIT Jaipur, 5–9 Jun 2023",
+        "Capacity Building Workshop on Sustainable Development, online, 23 Jun–1 Jul 2023",
+        "STTP: Application of Intelligent Techniques in Electrical Engineering, SCET Surat, 7–11 Jan 2019",
+        "STTP: Mathematical Modeling & Software Simulation for Power System Engineering, SVNIT Surat, 30 Nov–10 Dec 2016",
+        "STTP: Power Electronics System and Control, SVNIT Surat, 8–12 Dec 2014",
+        "STTP: Electric Vehicle, SVNIT Surat, 26–31 May 2014",
+        "STTP: Recent Trends in Control & Instrumentation, SVNIT Surat, 28 Jan–1 Feb 2013"
+      ],
+      workshopsConducted: [
+        'Coordinator, ISTE-approved STTP "IoT Development & Cyber Security Analytics", TCET, 22–27 Jun 2026',
+        "5-day hands-on Arduino workshop, Pre-International Conference Multicon-24, TCET",
+        "2-week in-house internship on Cloud Application Development, TCET, 20–30 Jun 2023",
+        "Organizer, one-day workshop on Solar Photovoltaic Technology with GERMI, 8 Feb 2018"
+      ]
+    },
+    professionalActivities: {
+      memberships: [
+        "Lifetime Member, Indian Society for Technical Education (ISTE)",
+        "Lifetime Associate Member, Institution of Engineers (India)"
+      ],
+      reviewerRoles: [
+        "Reviewer, International Conference on Electrical, Computer, Communications and Mechatronics Engineering (ICECCME 2026), Bali, Indonesia"
+      ],
+      responsibilities: [
+        "Department QA Coordinator",
+        "IEI student chapter Faculty Coordinator",
+        "TimeTable committee",
+        "HOC cell department coordinator"
+      ],
+      industryInteraction: [
+        "Coordination of Industry Visits, Local IV, BT Project Evaluation"
+      ]
+    }
+  },
+  {
+    metadata: {
+      id: "vivek-mishra",
+      hierarchyOrder: 7,
+      rankCategory: "Support Staff"
+    },
+    basicInfo: {
+      prefix: "Mr.",
+      fullName: "Vivek Mishra",
+      displayTitle: "Mr. Vivek Mishra",
+      designation: "Lab-Assistant",
+      department: "B.Tech. Internet of Things (IoT)",
+      institution: "Thakur College of Engineering & Technology (TCET)",
+      campus: "Kandivali (East), Mumbai",
+      profilePhotoUrl: "assets/images/vivek_mishra.png",
+      shortBio: "I hold a Bachelor of Science (B.Sc.) in Mathematics and Physics and currently work as a Lab Assistant with 7 months of experience. In my role, I support laboratory activities, assist with practical sessions, and help maintain a smooth learning environment. I am passionate about learning new technologies, improving my technical skills, and contributing to academic excellence through continuous growth and dedication."
+    },
+    contact: {
+      officialEmails: ["vivek011815@gmail.com"],
+      officeLocation: "Department of CSE-IoT, LAB-525, TCET Campus, Mumbai",
+      address: "Thakur Educational Campus, Shyamnarayan Thakur Marg, Thakur Village, Kandivali-East, Mumbai-400101, Maharashtra",
+      vidwanId: "-",
+      vidwanUrl: "",
+      orcidUrl: "",
+      scopusUrl: "",
+      googleScholarUrl: "",
+      researchGateUrl: "",
+      linkedinUrl: "",
+      githubUrl: ""
+    },
+    technicalSkills: [
+      "Microsoft office (power point, excel, word)",
+      "Chat gpt",
+      "gemini",
+      "perplexity",
+      "software installation",
+      "learning python"
+    ],
+    education: [
+      {
+        degree: "Bachelor of Science (B.Sc.)",
+        specialization: "Mathematics and Physics",
+        institution: "Thakur College of Engineering & Technology (TCET)",
+        year: ""
+      }
+    ],
+    experience: {
+      total: "7 months",
+      teaching: "-",
+      industry: "-",
+      research: "-"
+    },
+    laboratoriesHandled: [
+      "LAB-525 / I support laboratory sessions for various undergraduate courses, including Digital Systems and Computer Architecture (DSCA), Fundamentals of IoT (FIoT), Data Structures (DS), IoT and Networking Protocols (INP), and Universal Human Values-II (UHV-II)."
+    ],
+    labResponsibilities: [
+      "Preparing the laboratory before practical sessions, ensuring that all equipment and systems are functioning properly.",
+      "Assisting faculty members and students during laboratory experiments.",
+      "Maintaining laboratory equipment and inventory.",
+      "Ensuring safety protocols are followed.",
+      "Troubleshooting basic technical issues.",
+      "Keeping laboratory records and documentation up to date.",
+      "Supporting the smooth execution of practical sessions by coordinating laboratory resources and maintaining a clean and organized working environment."
+    ],
+    projectsSupported: [
+      "Developed a Student Passport Photo Downloader using Python to automate the downloading and organization of student passport photographs."
+    ],
+    achievements: {
+      certifications: [
+        "Successfully completed the ISRO START Programme – Scientific Observations from Space with an A+ Grade."
+      ],
+      fdpAttended: [
+        "Smart Office Practices for Effective Working, 22 June to 30 June 2026 (6 Days)."
+      ],
+      responsibilities: [
+        "As a Lab Assistant, I support the day-to-day academic and administrative activities of the department. My responsibilities include assisting in the preparation and conduct of practical sessions, maintaining laboratory equipment and records, preparing laboratory timetables, coordinating with faculty members for laboratory requirements, ensuring the availability of laboratory resources, and helping maintain a safe, organized, and efficient laboratory environment. I also assist with departmental documentation and other academic activities as required."
+      ],
+      awards: []
+    },
+    otherDetails: [
+      "I am a dedicated and responsible individual with a positive attitude toward learning and continuous improvement. I enjoy working collaboratively, adapt quickly to new technologies, and value discipline, punctuality, and effective communication. Outside of my professional responsibilities, I have a strong interest in sports, which has helped me develop qualities such as teamwork, discipline, perseverance, and leadership. I am committed to contributing to a productive academic environment while continuously enhancing my knowledge and skills."
+    ]
   }
 ];
 
