@@ -1,5 +1,6 @@
 /* ==========================================================================
-   TCET Faculty Portfolio System - Core Application Engine (v3.1)
+   TCET Faculty Portfolio System - Core Application Engine (v3.2)
+   - Fixed Search Box Typing Focus Bug (only updates grid container, does not recreate search box)
    - Expanded 7-Profile Academic & Support Staff Directory
    - Dynamic Layout Routing based on Designation Category
      * Faculty: 6 Navigation Tabs (Profile, Teaching, Research, etc.)
@@ -126,44 +127,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const minTCET = Math.min(...tcetExpList);
     const medianTCET = getMedian(tcetExpList);
 
-    const precedenceCategories = [
-      {
-        key: 'HOD',
-        title: 'Head of Department',
-        rankFilter: (f) => f.metadata.rankCategory.includes('Head of Department')
-      },
-      {
-        key: 'PROFESSOR',
-        title: 'Professors',
-        rankFilter: (f) => f.metadata.rankCategory === 'Professor'
-      },
-      {
-        key: 'ASST_PROF',
-        title: 'Assistant Professors',
-        rankFilter: (f) => f.metadata.rankCategory.includes('Assistant Professor')
-      },
-      {
-        key: 'SUPPORT_STAFF',
-        title: 'Support Staff',
-        rankFilter: (f) => f.metadata.rankCategory === 'Support Staff'
-      }
-    ];
-
-    const filteredFaculty = facultyData.filter(f => {
-      const matchesSearch = searchQuery === '' || 
-        f.basicInfo.fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        f.specializations.some(s => s.toLowerCase().includes(searchQuery.toLowerCase())) ||
-        f.basicInfo.designation.toLowerCase().includes(searchQuery.toLowerCase());
-
-      const matchesFilter = currentFilter === 'ALL' ||
-        (currentFilter === 'HOD' && f.metadata.rankCategory.includes('Head of Department')) ||
-        (currentFilter === 'PROFESSOR' && f.metadata.rankCategory === 'Professor') ||
-        (currentFilter === 'ASST_PROF' && f.metadata.rankCategory.includes('Assistant Professor')) ||
-        (currentFilter === 'SUPPORT_STAFF' && f.metadata.rankCategory === 'Support Staff');
-
-      return matchesSearch && matchesFilter;
-    });
-
     appEl.innerHTML = `
       <!-- Top Header Official Graphic Banner -->
       <div class="top-official-banner">
@@ -280,31 +243,9 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
       </div>
 
-      <!-- Main Directory Section Grouped by Precedence -->
-      <section class="container directory-section" style="padding-bottom: 3.5rem;">
-        ${precedenceCategories.map(cat => {
-          const categoryFaculty = filteredFaculty.filter(cat.rankFilter);
-          if (categoryFaculty.length === 0) return '';
-
-          return `
-            <div class="hierarchy-category-block">
-              <h2 class="hierarchy-section-title">
-                <i class="fa-solid fa-layer-group"></i> ${cat.title}
-              </h2>
-              <div class="faculty-modern-grid">
-                ${categoryFaculty.map(f => createModernFacultyCardHtml(f)).join('')}
-              </div>
-            </div>
-          `;
-        }).join('')}
-
-        ${filteredFaculty.length === 0 ? `
-          <div class="info-card" style="text-align:center; padding: 3rem;">
-            <i class="fa-solid fa-user-slash" style="font-size: 2.5rem; color: var(--text-light); margin-bottom: 1rem;"></i>
-            <h3>No faculty profiles match your search query.</h3>
-            <p style="color: var(--text-light); margin-top: 0.5rem;">Try adjusting your query or resetting filters.</p>
-          </div>
-        ` : ''}
+      <!-- Main Directory Section Grouped by Precedence (Dynamic Grid Container) -->
+      <section class="container directory-section" id="facultyGridContainer" style="padding-bottom: 3.5rem;">
+        <!-- Filled dynamically by updateFilteredGrid -->
       </section>
 
       <!-- Institutional Footer -->
@@ -319,31 +260,25 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>
     `;
 
-    // Event listeners
+    // Render grid contents initially
+    updateFilteredGrid();
+
+    // Event listener for live search (only updates grid innerHTML to keep typing focus!)
     const searchInput = document.getElementById('searchInput');
     if (searchInput) {
       searchInput.addEventListener('input', (e) => {
         searchQuery = e.target.value;
-        renderDirectoryView();
-        const newSearch = document.getElementById('searchInput');
-        if (newSearch) {
-          newSearch.focus();
-          newSearch.selectionStart = newSearch.selectionEnd = newSearch.value.length;
-        }
+        updateFilteredGrid();
       });
     }
 
+    // Event listener for precedence filter buttons
     document.querySelectorAll('.filter-btn').forEach(btn => {
       btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
         currentFilter = btn.getAttribute('data-filter');
-        renderDirectoryView();
-      });
-    });
-
-    document.querySelectorAll('.btn-quick-view').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const id = btn.getAttribute('data-id');
-        openQuickViewModal(id);
+        updateFilteredGrid();
       });
     });
 
@@ -355,6 +290,85 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.target === modalBackdrop) closeModal();
       });
     }
+  }
+
+  /* Live-updates the grid dynamically when search query or filter changes */
+  function updateFilteredGrid() {
+    const precedenceCategories = [
+      {
+        key: 'HOD',
+        title: 'Head of Department',
+        rankFilter: (f) => f.metadata.rankCategory.includes('Head of Department')
+      },
+      {
+        key: 'PROFESSOR',
+        title: 'Professors',
+        rankFilter: (f) => f.metadata.rankCategory === 'Professor'
+      },
+      {
+        key: 'ASST_PROF',
+        title: 'Assistant Professors',
+        rankFilter: (f) => f.metadata.rankCategory.includes('Assistant Professor')
+      },
+      {
+        key: 'SUPPORT_STAFF',
+        title: 'Support Staff',
+        rankFilter: (f) => f.metadata.rankCategory === 'Support Staff'
+      }
+    ];
+
+    const filteredFaculty = facultyData.filter(f => {
+      const matchesSearch = searchQuery === '' || 
+        f.basicInfo.fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (f.specializations && f.specializations.some(s => s.toLowerCase().includes(searchQuery.toLowerCase()))) ||
+        (f.technicalSkills && f.technicalSkills.some(s => s.toLowerCase().includes(searchQuery.toLowerCase()))) ||
+        f.basicInfo.designation.toLowerCase().includes(searchQuery.toLowerCase());
+
+      const matchesFilter = currentFilter === 'ALL' ||
+        (currentFilter === 'HOD' && f.metadata.rankCategory.includes('Head of Department')) ||
+        (currentFilter === 'PROFESSOR' && f.metadata.rankCategory === 'Professor') ||
+        (currentFilter === 'ASST_PROF' && f.metadata.rankCategory.includes('Assistant Professor')) ||
+        (currentFilter === 'SUPPORT_STAFF' && f.metadata.rankCategory === 'Support Staff');
+
+      return matchesSearch && matchesFilter;
+    });
+
+    const gridEl = document.getElementById('facultyGridContainer');
+    if (!gridEl) return;
+
+    gridEl.innerHTML = `
+      ${precedenceCategories.map(cat => {
+        const categoryFaculty = filteredFaculty.filter(cat.rankFilter);
+        if (categoryFaculty.length === 0) return '';
+
+        return `
+          <div class="hierarchy-category-block">
+            <h2 class="hierarchy-section-title">
+              <i class="fa-solid fa-layer-group"></i> ${cat.title}
+            </h2>
+            <div class="faculty-modern-grid">
+              ${categoryFaculty.map(f => createModernFacultyCardHtml(f)).join('')}
+            </div>
+          </div>
+        `;
+      }).join('')}
+
+      ${filteredFaculty.length === 0 ? `
+        <div class="info-card" style="text-align:center; padding: 3rem;">
+          <i class="fa-solid fa-user-slash" style="font-size: 2.5rem; color: var(--text-light); margin-bottom: 1rem;"></i>
+          <h3>No faculty profiles match your search query.</h3>
+          <p style="color: var(--text-light); margin-top: 0.5rem;">Try adjusting your query or resetting filters.</p>
+        </div>
+      ` : ''}
+    `;
+
+    // Rebind quick view buttons
+    document.querySelectorAll('.btn-quick-view').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-id');
+        openQuickViewModal(id);
+      });
+    });
   }
 
   function createModernFacultyCardHtml(f) {
@@ -1140,7 +1154,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             <div class="footer-links-column">
               <h4>System Details</h4>
-              <p style="font-size:0.825rem; color:#94A3B8;">Standardized Portfolio Architecture v3.1</p>
+              <p style="font-size:0.825rem; color:#94A3B8;">Standardized Portfolio Architecture v3.2</p>
               <p style="font-size:0.825rem; color:#94A3B8; margin-top:0.3rem;">Integrated 6-Tab Multi-Page System.</p>
             </div>
           </div>
