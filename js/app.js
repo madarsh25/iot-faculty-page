@@ -1,5 +1,5 @@
 /* ==========================================================================
-   TCET Faculty Portfolio System - Core Application Engine (v3.0)
+   TCET Faculty Portfolio System - Core Application Engine (v3.1)
    - Expanded 7-Profile Academic & Support Staff Directory
    - Dynamic Layout Routing based on Designation Category
      * Faculty: 6 Navigation Tabs (Profile, Teaching, Research, etc.)
@@ -7,6 +7,9 @@
    - Dynamic Hiding Logic for Empty Sections
    - Hero Section cleanup (no name hyperlink)
    - Copyright bar with AdarshYadav attribution inline
+   - Department Experience Insights Dashboard on Landing Page
+     * Maximum, Minimum, and Median Overall Experience
+     * Maximum, Minimum, and Median TCET Experience
    - Fully optimized and compliant with token spending guidelines
    ========================================================================== */
 
@@ -36,10 +39,92 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* ==========================================================================
+     UTILITY FUNCTIONS FOR EXPERIENCE STATS CALCULATIONS
+     ========================================================================== */
+  function parseExperienceYears(str) {
+    if (!str || str === '-' || str.toLowerCase() === 'nil' || str.toLowerCase() === 'none') return 0;
+    const yearsMatch = str.match(/(\d+(?:\.\d+)?)\s*year/i);
+    const monthsMatch = str.match(/(\d+)\s*month/i);
+    let years = 0;
+    if (yearsMatch) {
+      years = parseFloat(yearsMatch[1]);
+    } else {
+      const numMatch = str.match(/^(\d+(?:\.\d+)?)$/);
+      if (numMatch) years = parseFloat(numMatch[1]);
+    }
+    if (monthsMatch) {
+      years += parseInt(monthsMatch[1]) / 12;
+    }
+    return years;
+  }
+
+  function getOverallExperience(f) {
+    if (f.experience.total) {
+      const tot = parseExperienceYears(f.experience.total);
+      if (tot > 0) return tot;
+    }
+    const teaching = parseExperienceYears(f.experience.teaching);
+    const industry = parseExperienceYears(f.experience.industry);
+    return teaching + industry;
+  }
+
+  function getTCETExperience(f) {
+    let dateStr = f.experience.dateOfJoiningTCET;
+    if (!dateStr || dateStr === '-') {
+      if (f.metadata.rankCategory === "Support Staff") {
+        return parseExperienceYears(f.experience.total);
+      }
+      return 0;
+    }
+    
+    let joinDate;
+    if (dateStr.includes('/')) {
+      const parts = dateStr.split('/');
+      joinDate = new Date(parts[2], parts[1] - 1, parts[0]);
+    } else if (dateStr.includes('-')) {
+      const parts = dateStr.split('-');
+      joinDate = new Date(parts[2], parts[1] - 1, parts[0]);
+    } else if (dateStr.match(/^\d{4}$/)) {
+      joinDate = new Date(dateStr, 0, 1);
+    } else {
+      joinDate = new Date(dateStr);
+    }
+
+    if (isNaN(joinDate.getTime())) return 0;
+
+    const currentDate = new Date(2026, 7, 3); // August 3, 2026
+    const diffMs = currentDate - joinDate;
+    const diffYears = diffMs / (1000 * 60 * 60 * 24 * 365.25);
+    return Math.max(0, parseFloat(diffYears.toFixed(2)));
+  }
+
+  function getMedian(arr) {
+    if (arr.length === 0) return 0;
+    const sorted = [...arr].sort((a, b) => a - b);
+    const mid = Math.floor(sorted.length / 2);
+    if (sorted.length % 2 !== 0) {
+      return sorted[mid];
+    }
+    return (sorted[mid - 1] + sorted[mid]) / 2;
+  }
+
+  /* ==========================================================================
      1. MAIN DIRECTORY LANDING PAGE (COMPACT 2-COLUMN SIDE-BY-SIDE GRID)
      ========================================================================== */
   function renderDirectoryView() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // Dynamic Experience Stats Calculation
+    const overallExpList = facultyData.map(f => getOverallExperience(f));
+    const tcetExpList = facultyData.map(f => getTCETExperience(f));
+
+    const maxOverall = Math.max(...overallExpList);
+    const minOverall = Math.min(...overallExpList);
+    const medianOverall = getMedian(overallExpList);
+
+    const maxTCET = Math.max(...tcetExpList);
+    const minTCET = Math.min(...tcetExpList);
+    const medianTCET = getMedian(tcetExpList);
 
     const precedenceCategories = [
       {
@@ -124,6 +209,56 @@ document.addEventListener('DOMContentLoaded', () => {
               <h4>CBCGS-HME</h4>
               <p>2025 Autonomous</p>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Department Experience Statistics Insights Dashboard -->
+      <section class="container experience-stats-section" style="margin-top: 2rem; margin-bottom: 1rem;">
+        <div style="background: linear-gradient(135deg, #0F2042 0%, #1E3A8A 100%); color: #FFFFFF; padding: 1.75rem 2rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); border-top: 4px solid var(--accent-gold);">
+          <h3 style="font-family: var(--font-heading); font-size: 1.25rem; color: var(--accent-gold); margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.5rem; letter-spacing: 0.5px;">
+            <i class="fa-solid fa-chart-line"></i> Department Experience Insights
+          </h3>
+          <div class="stats-insights-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+            
+            <!-- Overall Professional Experience Card -->
+            <div style="background: rgba(255,255,255,0.04); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid rgba(255,255,255,0.08);">
+              <h4 style="font-size: 1rem; color: #FFFFFF; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.5rem; margin-bottom: 1rem; font-family: var(--font-heading); display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fa-solid fa-graduation-cap" style="color: var(--accent-gold);"></i> Overall Professional Experience
+              </h4>
+              <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem;">
+                <span style="color: #94A3B8; font-size: 0.9rem;">Maximum Experience:</span>
+                <strong style="color: #FFFFFF; font-size: 0.95rem;">${maxOverall.toFixed(1)} Years</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem;">
+                <span style="color: #94A3B8; font-size: 0.9rem;">Minimum Experience:</span>
+                <strong style="color: #FFFFFF; font-size: 0.95rem;">${minOverall.toFixed(1)} Years</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 0.75rem;">
+                <span style="color: #94A3B8; font-size: 0.9rem; font-weight: 600;">Median Experience:</span>
+                <strong style="color: var(--accent-gold); font-size: 1rem; font-weight: 700;">${medianOverall.toFixed(1)} Years</strong>
+              </div>
+            </div>
+
+            <!-- TCET Institutional Experience Card -->
+            <div style="background: rgba(255,255,255,0.04); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid rgba(255,255,255,0.08);">
+              <h4 style="font-size: 1rem; color: #FFFFFF; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.5rem; margin-bottom: 1rem; font-family: var(--font-heading); display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fa-solid fa-building-columns" style="color: var(--accent-gold);"></i> TCET Institutional Experience
+              </h4>
+              <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem;">
+                <span style="color: #94A3B8; font-size: 0.9rem;">Maximum TCET Tenure:</span>
+                <strong style="color: #FFFFFF; font-size: 0.95rem;">${maxTCET.toFixed(1)} Years</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem;">
+                <span style="color: #94A3B8; font-size: 0.9rem;">Minimum TCET Tenure:</span>
+                <strong style="color: #FFFFFF; font-size: 0.95rem;">${minTCET.toFixed(1)} Years</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 0.75rem;">
+                <span style="color: #94A3B8; font-size: 0.9rem; font-weight: 600;">Median TCET Tenure:</span>
+                <strong style="color: var(--accent-gold); font-size: 1rem; font-weight: 700;">${medianTCET.toFixed(1)} Years</strong>
+              </div>
+            </div>
+
           </div>
         </div>
       </section>
@@ -224,11 +359,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function createModernFacultyCardHtml(f) {
     const isHod = f.metadata.rankCategory.includes('Head of Department');
-    
-    // Fallback for qualifications display in list card
     const qualSummary = f.education && f.education.length > 0 ? f.education.map(e => `${e.degree}${e.specialization ? ` (${e.specialization.split(' ')[0]})` : ''}`).join(' • ') : '-';
-    
-    // Support Staff check for qualifications/spec tags
     const specTags = f.specializations ? f.specializations.slice(0, 3) : (f.technicalSkills ? f.technicalSkills.slice(0, 3) : []);
 
     return `
@@ -285,7 +416,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const isSupportStaff = f.metadata.rankCategory === "Support Staff";
 
-    // Dynamic Navigation tabs based on designation category
     const tabs = isSupportStaff ? [
       { id: 'profile', label: 'Profile', icon: 'fa-user' },
       { id: 'expertise', label: 'Technical Expertise', icon: 'fa-screwdriver-wrench' },
@@ -325,11 +455,8 @@ document.addEventListener('DOMContentLoaded', () => {
           <img src="${f.basicInfo.profilePhotoUrl}" alt="${f.basicInfo.fullName}" class="portfolio-avatar-large">
           <div class="portfolio-hero-info">
             <span class="hero-badge"><i class="fa-solid fa-certificate"></i> ${f.metadata.rankCategory}</span>
-            <!-- Name is simple text, not hyperlinked (Vidwan link target removed from name) -->
             <h1>${f.basicInfo.displayTitle}</h1>
-            <!-- Designation shown once only -->
             <p class="p-designation">${f.basicInfo.designation}</p>
-            <!-- Exactly formatted department/college line -->
             <p class="p-dept"><i class="fa-solid fa-building-columns"></i> Department of Computer Science & Engineering (Internet of Things) | Thakur College of Engineering & Technology (TCET)</p>
             
             <!-- Hero Links: Separate and individually labeled -->
@@ -393,9 +520,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const isSupportStaff = f.metadata.rankCategory === "Support Staff";
 
     if (isSupportStaff) {
-      /* ==========================================================================
-         A. SUPPORT STAFF LAYOUT RENDERING
-         ========================================================================== */
       switch (tab) {
         /* TAB 1: PROFILE */
         case 'profile': {
@@ -576,9 +700,6 @@ document.addEventListener('DOMContentLoaded', () => {
           return `<p>Select a tab above to view details.</p>`;
       }
     } else {
-      /* ==========================================================================
-         B. STANDARD FACULTY LAYOUT RENDERING
-         ========================================================================== */
       switch (tab) {
         /* TAB 1: PROFILE */
         case 'profile': {
@@ -610,7 +731,7 @@ document.addEventListener('DOMContentLoaded', () => {
               </div>
             ` : ''}
 
-          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:2rem; @media(max-width:850px){grid-template-columns: 1fr;}">
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:2rem; @media(max-width:850px){grid-template-columns: 1fr;}">
               ${showEducation ? `
                 <div class="info-card">
                   <h3 style="font-size:1.15rem; color:var(--primary-navy); margin-bottom:1.25rem;"><i class="fa-solid fa-user-graduate"></i> Educational Qualifications</h3>
@@ -628,7 +749,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
               ${showExperience ? `
                 <div class="info-card">
-                  <!-- Head styled as just "Experience" -->
                   <h3 style="font-size:1.15rem; color:var(--primary-navy); margin-bottom:1.25rem;"><i class="fa-solid fa-briefcase"></i> Experience</h3>
                   <div style="display:flex; flex-direction:column; gap:0.75rem;">
                     ${f.experience.teaching && f.experience.teaching !== '-' ? `<p><strong>Total Teaching Experience:</strong> ${f.experience.teaching}</p>` : ''}
@@ -1020,7 +1140,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             <div class="footer-links-column">
               <h4>System Details</h4>
-              <p style="font-size:0.825rem; color:#94A3B8;">Standardized Portfolio Architecture v3.0</p>
+              <p style="font-size:0.825rem; color:#94A3B8;">Standardized Portfolio Architecture v3.1</p>
               <p style="font-size:0.825rem; color:#94A3B8; margin-top:0.3rem;">Integrated 6-Tab Multi-Page System.</p>
             </div>
           </div>
