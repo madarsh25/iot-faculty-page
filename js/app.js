@@ -1,17 +1,10 @@
 /* ==========================================================================
-   TCET Faculty Portfolio System - Core Application Engine (v3.2)
-   - Fixed Search Box Typing Focus Bug (only updates grid container, does not recreate search box)
-   - Expanded 7-Profile Academic & Support Staff Directory
-   - Dynamic Layout Routing based on Designation Category
-     * Faculty: 6 Navigation Tabs (Profile, Teaching, Research, etc.)
-     * Support Staff: 4 Navigation Tabs (Profile, Technical Expertise, Lab & Responsibilities, Training & Achievements)
-   - Dynamic Hiding Logic for Empty Sections
-   - Hero Section cleanup (no name hyperlink)
-   - Copyright bar with AdarshYadav attribution inline
-   - Department Experience Insights Dashboard on Landing Page
-     * Maximum, Minimum, and Median Overall Experience
-     * Maximum, Minimum, and Median TCET Experience
-   - Fully optimized and compliant with token spending guidelines
+   TCET Faculty Portfolio System - Core Application Engine (v4.0)
+   - Left Sidebar & Unified Grid Layout
+   - Dynamic 4-Section Experience Stats (Teaching, Industry, TCET, and IoT Dept)
+   - Expanded 11-Profile Academic & Support Staff Directory
+   - Sorted Single continuous grid without Precedence subheadings
+   - Fixed Search Box Live Typing Focus
    ========================================================================== */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -59,14 +52,13 @@ document.addEventListener('DOMContentLoaded', () => {
     return years;
   }
 
-  function getOverallExperience(f) {
-    if (f.experience.total) {
-      const tot = parseExperienceYears(f.experience.total);
-      if (tot > 0) return tot;
-    }
-    const teaching = parseExperienceYears(f.experience.teaching);
-    const industry = parseExperienceYears(f.experience.industry);
-    return teaching + industry;
+  function getTeachingExperience(f) {
+    if (f.metadata.rankCategory === "Support Staff") return 0;
+    return parseExperienceYears(f.experience.teaching);
+  }
+
+  function getIndustryExperience(f) {
+    return parseExperienceYears(f.experience.industry);
   }
 
   function getTCETExperience(f) {
@@ -93,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (isNaN(joinDate.getTime())) return 0;
 
-    const currentDate = new Date(2026, 7, 3); // August 3, 2026
+    const currentDate = new Date(2026, 7, 24); // August 24, 2026
     const diffMs = currentDate - joinDate;
     const diffYears = diffMs / (1000 * 60 * 60 * 24 * 365.25);
     return Math.max(0, parseFloat(diffYears.toFixed(2)));
@@ -110,22 +102,33 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* ==========================================================================
-     1. MAIN DIRECTORY LANDING PAGE (COMPACT 2-COLUMN SIDE-BY-SIDE GRID)
+     1. MAIN DIRECTORY LANDING PAGE (RESTYLED WITH STICKY LEFT SIDEBAR)
      ========================================================================== */
   function renderDirectoryView() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
     // Dynamic Experience Stats Calculation
-    const overallExpList = facultyData.map(f => getOverallExperience(f));
-    const tcetExpList = facultyData.map(f => getTCETExperience(f));
+    const teachingList = facultyData.map(f => getTeachingExperience(f)).filter(exp => exp > 0);
+    const industryList = facultyData.map(f => getIndustryExperience(f)).filter(exp => exp > 0);
+    const tcetList = facultyData.map(f => getTCETExperience(f)).filter(exp => exp > 0);
 
-    const maxOverall = Math.max(...overallExpList);
-    const minOverall = Math.min(...overallExpList);
-    const medianOverall = getMedian(overallExpList);
-
-    const maxTCET = Math.max(...tcetExpList);
-    const minTCET = Math.min(...tcetExpList);
-    const medianTCET = getMedian(tcetExpList);
+    const stats = {
+      teaching: {
+        max: teachingList.length ? Math.max(...teachingList) : 0,
+        min: teachingList.length ? Math.min(...teachingList) : 0,
+        median: getMedian(teachingList)
+      },
+      industry: {
+        max: industryList.length ? Math.max(...industryList) : 0,
+        min: industryList.length ? Math.min(...industryList) : 0,
+        median: getMedian(industryList)
+      },
+      tcet: {
+        max: tcetList.length ? Math.max(...tcetList) : 0,
+        min: tcetList.length ? Math.min(...tcetList) : 0,
+        median: getMedian(tcetList)
+      }
+    };
 
     appEl.innerHTML = `
       <!-- Top Header Official Graphic Banner -->
@@ -176,63 +179,19 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
       </section>
 
-      <!-- Department Experience Statistics Insights Dashboard -->
-      <section class="container experience-stats-section" style="margin-top: 2rem; margin-bottom: 1rem;">
-        <div style="background: linear-gradient(135deg, #0F2042 0%, #1E3A8A 100%); color: #FFFFFF; padding: 1.75rem 2rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); border-top: 4px solid var(--accent-gold);">
-          <h3 style="font-family: var(--font-heading); font-size: 1.25rem; color: var(--accent-gold); margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.5rem; letter-spacing: 0.5px;">
-            <i class="fa-solid fa-chart-line"></i> Department Experience Insights
-          </h3>
-          <div class="stats-insights-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
-            
-            <!-- Overall Professional Experience Card -->
-            <div style="background: rgba(255,255,255,0.04); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid rgba(255,255,255,0.08);">
-              <h4 style="font-size: 1rem; color: #FFFFFF; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.5rem; margin-bottom: 1rem; font-family: var(--font-heading); display: flex; align-items: center; gap: 0.5rem;">
-                <i class="fa-solid fa-graduation-cap" style="color: var(--accent-gold);"></i> Overall Professional Experience
-              </h4>
-              <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem;">
-                <span style="color: #94A3B8; font-size: 0.9rem;">Maximum Experience:</span>
-                <strong style="color: #FFFFFF; font-size: 0.95rem;">${maxOverall.toFixed(1)} Years</strong>
-              </div>
-              <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem;">
-                <span style="color: #94A3B8; font-size: 0.9rem;">Minimum Experience:</span>
-                <strong style="color: #FFFFFF; font-size: 0.95rem;">${minOverall.toFixed(1)} Years</strong>
-              </div>
-              <div style="display: flex; justify-content: space-between; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 0.75rem;">
-                <span style="color: #94A3B8; font-size: 0.9rem; font-weight: 600;">Median Experience:</span>
-                <strong style="color: var(--accent-gold); font-size: 1rem; font-weight: 700;">${medianOverall.toFixed(1)} Years</strong>
-              </div>
-            </div>
-
-            <!-- TCET Institutional Experience Card -->
-            <div style="background: rgba(255,255,255,0.04); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid rgba(255,255,255,0.08);">
-              <h4 style="font-size: 1rem; color: #FFFFFF; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.5rem; margin-bottom: 1rem; font-family: var(--font-heading); display: flex; align-items: center; gap: 0.5rem;">
-                <i class="fa-solid fa-building-columns" style="color: var(--accent-gold);"></i> TCET Institutional Experience
-              </h4>
-              <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem;">
-                <span style="color: #94A3B8; font-size: 0.9rem;">Maximum TCET Tenure:</span>
-                <strong style="color: #FFFFFF; font-size: 0.95rem;">${maxTCET.toFixed(1)} Years</strong>
-              </div>
-              <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem;">
-                <span style="color: #94A3B8; font-size: 0.9rem;">Minimum TCET Tenure:</span>
-                <strong style="color: #FFFFFF; font-size: 0.95rem;">${minTCET.toFixed(1)} Years</strong>
-              </div>
-              <div style="display: flex; justify-content: space-between; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 0.75rem;">
-                <span style="color: #94A3B8; font-size: 0.9rem; font-weight: 600;">Median TCET Tenure:</span>
-                <strong style="color: var(--accent-gold); font-size: 1rem; font-weight: 700;">${medianTCET.toFixed(1)} Years</strong>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </section>
-
-      <!-- Toolbar with Compact Search Box & Precedence Filters -->
-      <div class="container directory-toolbar">
-        <div class="toolbar-card">
+      <!-- Main Directory Layout with Left Sidebar and Right Cards Panel -->
+      <div class="container landing-split-layout">
+        
+        <!-- Left Sidebar Panel containing Search, Filters, and Stats -->
+        <aside class="sidebar-panel">
+          
+          <!-- Sticky Search Box -->
           <div class="search-box">
             <i class="fa-solid fa-magnifying-glass"></i>
             <input type="text" id="searchInput" placeholder="Search faculty..." value="${searchQuery}">
           </div>
+
+          <!-- Sticky Precedence Filters -->
           <div class="filter-group">
             <button class="filter-btn ${currentFilter === 'ALL' ? 'active' : ''}" data-filter="ALL">All Precedence</button>
             <button class="filter-btn ${currentFilter === 'HOD' ? 'active' : ''}" data-filter="HOD">HOD</button>
@@ -240,13 +199,90 @@ document.addEventListener('DOMContentLoaded', () => {
             <button class="filter-btn ${currentFilter === 'ASST_PROF' ? 'active' : ''}" data-filter="ASST_PROF">Assistant Professors</button>
             <button class="filter-btn ${currentFilter === 'SUPPORT_STAFF' ? 'active' : ''}" data-filter="SUPPORT_STAFF">Support Staff</button>
           </div>
-        </div>
-      </div>
 
-      <!-- Main Directory Section Grouped by Precedence (Dynamic Grid Container) -->
-      <section class="container directory-section" id="facultyGridContainer" style="padding-bottom: 3.5rem;">
-        <!-- Filled dynamically by updateFilteredGrid -->
-      </section>
+          <!-- Redesigned Experience Statistics Insights Dashboard -->
+          <div class="sidebar-experience-stats">
+            <h3><i class="fa-solid fa-chart-line"></i> Experience Insights</h3>
+            
+            <!-- 1. Teaching Experience -->
+            <div class="stat-category-card">
+              <h4><i class="fa-solid fa-graduation-cap"></i> Teaching Exp.</h4>
+              <div class="stat-row">
+                <span>Maximum:</span>
+                <strong>${stats.teaching.max.toFixed(1)} Yrs</strong>
+              </div>
+              <div class="stat-row">
+                <span>Minimum:</span>
+                <strong>${stats.teaching.min.toFixed(1)} Yrs</strong>
+              </div>
+              <div class="stat-row median-row">
+                <span>Median:</span>
+                <strong>${stats.teaching.median.toFixed(1)} Yrs</strong>
+              </div>
+            </div>
+
+            <!-- 2. Industry Experience -->
+            <div class="stat-category-card">
+              <h4><i class="fa-solid fa-briefcase"></i> Industry Exp.</h4>
+              <div class="stat-row">
+                <span>Maximum:</span>
+                <strong>${stats.industry.max.toFixed(1)} Yrs</strong>
+              </div>
+              <div class="stat-row">
+                <span>Minimum:</span>
+                <strong>${stats.industry.min.toFixed(1)} Yrs</strong>
+              </div>
+              <div class="stat-row median-row">
+                <span>Median:</span>
+                <strong>${stats.industry.median.toFixed(1)} Yrs</strong>
+              </div>
+            </div>
+
+            <!-- 3. Years in TCET -->
+            <div class="stat-category-card">
+              <h4><i class="fa-solid fa-building-columns"></i> Years in TCET</h4>
+              <div class="stat-row">
+                <span>Maximum:</span>
+                <strong>${stats.tcet.max.toFixed(1)} Yrs</strong>
+              </div>
+              <div class="stat-row">
+                <span>Minimum:</span>
+                <strong>${stats.tcet.min.toFixed(1)} Yrs</strong>
+              </div>
+              <div class="stat-row median-row">
+                <span>Median:</span>
+                <strong>${stats.tcet.median.toFixed(1)} Yrs</strong>
+              </div>
+            </div>
+
+            <!-- 4. Years in IoT Department -->
+            <div class="stat-category-card">
+              <h4><i class="fa-solid fa-microchip"></i> Years in IoT Dept.</h4>
+              <div class="stat-row">
+                <span>Maximum:</span>
+                <strong>-</strong>
+              </div>
+              <div class="stat-row">
+                <span>Minimum:</span>
+                <strong>-</strong>
+              </div>
+              <div class="stat-row median-row">
+                <span>Median:</span>
+                <strong>-</strong>
+              </div>
+            </div>
+
+          </div>
+        </aside>
+
+        <!-- Right Content Cards Panel -->
+        <main class="cards-panel">
+          <div class="faculty-modern-grid" id="facultyGridContainer" style="margin-bottom: 2rem;">
+            <!-- Filled dynamically by updateFilteredGrid -->
+          </div>
+        </main>
+
+      </div>
 
       <!-- Institutional Footer -->
       ${createInstitutionalFooterHtml()}
@@ -294,29 +330,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* Live-updates the grid dynamically when search query or filter changes */
   function updateFilteredGrid() {
-    const precedenceCategories = [
-      {
-        key: 'HOD',
-        title: 'Head of Department',
-        rankFilter: (f) => f.metadata.rankCategory.includes('Head of Department')
-      },
-      {
-        key: 'PROFESSOR',
-        title: 'Professors',
-        rankFilter: (f) => f.metadata.rankCategory === 'Professor'
-      },
-      {
-        key: 'ASST_PROF',
-        title: 'Assistant Professors',
-        rankFilter: (f) => f.metadata.rankCategory.includes('Assistant Professor')
-      },
-      {
-        key: 'SUPPORT_STAFF',
-        title: 'Support Staff',
-        rankFilter: (f) => f.metadata.rankCategory === 'Support Staff'
-      }
-    ];
-
     const filteredFaculty = facultyData.filter(f => {
       const matchesSearch = searchQuery === '' || 
         f.basicInfo.fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -337,24 +350,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!gridEl) return;
 
     gridEl.innerHTML = `
-      ${precedenceCategories.map(cat => {
-        const categoryFaculty = filteredFaculty.filter(cat.rankFilter);
-        if (categoryFaculty.length === 0) return '';
-
-        return `
-          <div class="hierarchy-category-block">
-            <h2 class="hierarchy-section-title">
-              <i class="fa-solid fa-layer-group"></i> ${cat.title}
-            </h2>
-            <div class="faculty-modern-grid">
-              ${categoryFaculty.map(f => createModernFacultyCardHtml(f)).join('')}
-            </div>
-          </div>
-        `;
-      }).join('')}
+      ${filteredFaculty.map(f => createModernFacultyCardHtml(f)).join('')}
 
       ${filteredFaculty.length === 0 ? `
-        <div class="info-card" style="text-align:center; padding: 3rem;">
+        <div class="info-card" style="text-align:center; padding: 3rem; grid-column: 1 / -1;">
           <i class="fa-solid fa-user-slash" style="font-size: 2.5rem; color: var(--text-light); margin-bottom: 1rem;"></i>
           <h3>No faculty profiles match your search query.</h3>
           <p style="color: var(--text-light); margin-top: 0.5rem;">Try adjusting your query or resetting filters.</p>
@@ -373,7 +372,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function createModernFacultyCardHtml(f) {
     const isHod = f.metadata.rankCategory.includes('Head of Department');
-    const qualSummary = f.education && f.education.length > 0 ? f.education.map(e => `${e.degree}${e.specialization ? ` (${e.specialization.split(' ')[0]})` : ''}`).join(' • ') : '-';
+    const qualSummary = f.education && f.education.length > 0 ? f.education.map(e => `${e.degree}${e.specialization && e.specialization !== '-' ? ` (${e.specialization.split(' ')[0]})` : ''}`).join(' • ') : '-';
     const specTags = f.specializations ? f.specializations.slice(0, 3) : (f.technicalSkills ? f.technicalSkills.slice(0, 3) : []);
 
     return `
@@ -475,27 +474,27 @@ document.addEventListener('DOMContentLoaded', () => {
             
             <!-- Hero Links: Separate and individually labeled -->
             <div class="portfolio-hero-actions" style="margin-top: 1rem; display: flex; flex-wrap: wrap; gap: 0.5rem;">
-              ${f.contact.orcidUrl ? `
+              ${f.contact.orcidUrl && f.contact.orcidUrl !== '-' ? `
                 <a href="${f.contact.orcidUrl}" target="_blank" class="p-vidwan-button" style="background:#A3E635; color:#0F2042;">
                   <i class="fa-brands fa-orcid"></i> ORCID
                 </a>
               ` : ''}
-              ${f.contact.scopusUrl ? `
+              ${f.contact.scopusUrl && f.contact.scopusUrl !== '-' ? `
                 <a href="${f.contact.scopusUrl}" target="_blank" class="p-vidwan-button" style="background:#38BDF8; color:#0F2042;">
                   <i class="fa-solid fa-graduation-cap"></i> Scopus
                 </a>
               ` : ''}
-              ${f.contact.googleScholarUrl ? `
+              ${f.contact.googleScholarUrl && f.contact.googleScholarUrl !== '-' ? `
                 <a href="${f.contact.googleScholarUrl}" target="_blank" class="p-vidwan-button" style="background:#FBBF24; color:#0F2042;">
                   <i class="fa-brands fa-google"></i> Google Scholar
                 </a>
               ` : ''}
-              ${f.contact.researchGateUrl ? `
+              ${f.contact.researchGateUrl && f.contact.researchGateUrl !== '-' ? `
                 <a href="${f.contact.researchGateUrl}" target="_blank" class="p-vidwan-button" style="background:#F472B6; color:#0F2042;">
                   <i class="fa-brands fa-researchgate"></i> ResearchGate
                 </a>
               ` : ''}
-              ${f.contact.vidwanUrl ? `
+              ${f.contact.vidwanUrl && f.contact.vidwanUrl !== '-' ? `
                 <a href="${f.contact.vidwanUrl}" target="_blank" class="p-vidwan-button" style="background:#FB7185; color:#0F2042;">
                   <i class="fa-solid fa-id-card"></i> Vidwan ID: ${f.contact.vidwanId}
                 </a>
@@ -563,7 +562,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     ${f.education.map(e => `
                       <div class="timeline-item">
                         <div class="timeline-title">${e.degree}</div>
-                        ${e.specialization ? `<div class="timeline-subtitle">${e.specialization}</div>` : ''}
+                        ${e.specialization && e.specialization !== '-' ? `<div class="timeline-subtitle">${e.specialization}</div>` : ''}
                         <div class="timeline-meta">${e.institution || ''} ${e.year ? `• ${e.year}` : ''}</div>
                       </div>
                     `).join('')}
@@ -753,7 +752,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     ${f.education.map(e => `
                       <div class="timeline-item">
                         <div class="timeline-title">${e.degree}</div>
-                        ${e.specialization ? `<div class="timeline-subtitle">${e.specialization}</div>` : ''}
+                        ${e.specialization && e.specialization !== '-' ? `<div class="timeline-subtitle">${e.specialization}</div>` : ''}
                         <div class="timeline-meta">${e.institution || ''} ${e.year ? `• ${e.year}` : ''}</div>
                       </div>
                     `).join('')}
@@ -1154,8 +1153,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             <div class="footer-links-column">
               <h4>System Details</h4>
-              <p style="font-size:0.825rem; color:#94A3B8;">Standardized Portfolio Architecture v3.2</p>
-              <p style="font-size:0.825rem; color:#94A3B8; margin-top:0.3rem;">Integrated 6-Tab Multi-Page System.</p>
+              <p style="font-size:0.825rem; color:#94A3B8;">Standardized Portfolio Architecture v4.0</p>
+              <p style="font-size:0.825rem; color:#94A3B8; margin-top:0.3rem;">Integrated 11 Profiles Sidebar System.</p>
             </div>
           </div>
 
@@ -1188,7 +1187,7 @@ document.addEventListener('DOMContentLoaded', () => {
               
               <!-- Leftover profile links placed here -->
               <div style="margin-top:1rem; display:flex; gap:1rem; align-items:center;">
-                ${f.contact.linkedinUrl ? `<a href="${f.contact.linkedinUrl}" target="_blank" style="color:#CBD5E1;"><i class="fa-brands fa-linkedin" style="font-size:1.25rem;"></i> LinkedIn Profile</a>` : ''}
+                ${f.contact.linkedinUrl && f.contact.linkedinUrl !== '-' ? `<a href="${f.contact.linkedinUrl}" target="_blank" style="color:#CBD5E1;"><i class="fa-brands fa-linkedin" style="font-size:1.25rem;"></i> LinkedIn Profile</a>` : ''}
               </div>
             </div>
           </div>
@@ -1221,7 +1220,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalBackdrop = document.getElementById('quickViewModal');
 
     const highestQual = f.highlights ? f.highlights.highestQualification : (f.education && f.education.length > 0 ? f.education[0].degree : '-');
-    const teachingExp = f.experience.teaching || f.experience.total || '-';
+    const teachingExp = f.experience.teaching && f.experience.teaching !== '-' ? f.experience.teaching : (f.experience.total || '-');
     const contactEmail = f.contact.officialEmails && f.contact.officialEmails.length > 0 ? f.contact.officialEmails[0] : (f.contact.officialEmail || '');
 
     modalBody.innerHTML = `
