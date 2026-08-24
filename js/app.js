@@ -818,6 +818,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 </ul>
               </div>
             ` : ''}
+
+            <!-- Student Resources Card -->
+            <div class="info-card" style="border-left: 4px solid var(--accent-gold);">
+              <h3 style="color:var(--primary-navy); margin-bottom:0.75rem; font-size:1.1rem;"><i class="fa-solid fa-folder-open"></i> Student Resources</h3>
+              <p style="font-size:0.9rem; color:var(--text-muted); line-height:1.6; margin-bottom:1rem;">
+                Access study reference materials, lecture notes, syllabus blueprints, and laboratory instruction manuals for courses taught by this faculty member.
+              </p>
+              <a href="https://drive.google.com/drive/folders/1KvSx6YD2ifKtAySA5Ysv2eI0ZpyPYqp0?usp=drive_link" target="_blank" class="btn btn-primary" style="width:auto; display:inline-flex;">
+                <i class="fa-solid fa-up-right-from-square"></i> Open Google Drive Folder
+              </a>
+            </div>
           `;
         }
 
