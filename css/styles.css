@@ -115,6 +115,7 @@ img {
   align-items: center;
   gap: 0.85rem;
   cursor: pointer;
+  text-decoration: none;
 }
 
 .brand-tcet-logo-img {

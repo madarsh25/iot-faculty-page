@@ -186,16 +186,18 @@ document.addEventListener('DOMContentLoaded', () => {
     appEl.innerHTML = `
       <!-- Top Header Official Graphic Banner -->
       <div class="top-official-banner">
-        <img src="assets/images/tcet_banner.png" alt="TCET Department of Computer Science & Engineering (IoT) Banner" class="top-banner-img">
+        <a href="https://www.tcetmumbai.in/IOT/" target="_blank" rel="noopener noreferrer">
+          <img src="assets/images/tcet_banner.png" alt="TCET Department of Computer Science & Engineering (IoT) Banner" class="top-banner-img">
+        </a>
       </div>
 
       <!-- Sticky Header Nav with Official TCET Shield Logo -->
       <header class="tcet-header">
         <div class="container header-inner">
-          <div class="header-brand" onclick="window.location.hash='#teaching'">
+          <a href="https://www.tcetmumbai.in/IOT/" target="_blank" rel="noopener noreferrer" class="header-brand">
             <img src="assets/images/tcet_college_logo.png" alt="TCET Logo" class="brand-tcet-logo-img" onerror="this.onerror=null; this.src='assets/images/tcet_college-logo.png';">
             <span class="brand-title-small">Faculty Portfolio System</span>
-          </div>
+          </a>
           <nav class="header-nav">
             <a href="#teaching" class="nav-link ${isTeaching ? 'active' : ''}"><i class="fa-solid fa-chalkboard-user"></i> Teaching Faculty</a>
             <a href="#non-teaching" class="nav-link ${!isTeaching ? 'active' : ''}"><i class="fa-solid fa-user-gear"></i> Non-Teaching Staff</a>
@@ -533,16 +535,18 @@ document.addEventListener('DOMContentLoaded', () => {
     appEl.innerHTML = `
       <!-- Top Official Graphic Banner -->
       <div class="top-official-banner">
-        <img src="assets/images/tcet_banner.png" alt="TCET Department Header Banner" class="top-banner-img">
+        <a href="https://www.tcetmumbai.in/IOT/" target="_blank" rel="noopener noreferrer">
+          <img src="assets/images/tcet_banner.png" alt="TCET Department Header Banner" class="top-banner-img">
+        </a>
       </div>
 
       <!-- Sticky Header Nav with Official TCET Shield Logo -->
       <header class="tcet-header">
         <div class="container header-inner">
-          <div class="header-brand" onclick="window.location.hash='#directory'">
+          <a href="https://www.tcetmumbai.in/IOT/" target="_blank" rel="noopener noreferrer" class="header-brand">
             <img src="assets/images/tcet_college_logo.png" alt="TCET Logo" class="brand-tcet-logo-img" onerror="this.onerror=null; this.src='assets/images/tcet_college-logo.png';">
             <span class="brand-title-small">Faculty Portfolio System</span>
-          </div>
+          </a>
           <nav class="header-nav">
             <a href="${isSupportStaff ? '#non-teaching' : '#teaching'}" class="nav-link nav-btn-back"><i class="fa-solid fa-arrow-left"></i> ${isSupportStaff ? 'Back to Non-Teaching Staff' : 'Back to Teaching Faculty'}</a>
           </nav>
@@ -1229,7 +1233,9 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class="footer-grid-layout">
             <div>
               <div class="footer-logos-header">
-                <img src="assets/images/tcet_college_logo.png" alt="TCET College Crest" class="footer-logo-img" onerror="this.onerror=null; this.src='assets/images/tcet_college-logo.png';">
+                <a href="https://www.tcetmumbai.in/IOT/" target="_blank" rel="noopener noreferrer">
+                  <img src="assets/images/tcet_college_logo.png" alt="TCET College Crest" class="footer-logo-img" onerror="this.onerror=null; this.src='assets/images/tcet_college-logo.png';">
+                </a>
               </div>
               <div class="footer-brand-info">
                 <h3>TCET Faculty Portfolio System</h3>
@@ -1292,7 +1298,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
           <!-- 30% College-Related Content Area -->
           <div>
-            <img src="assets/images/tcet_college_logo.png" alt="TCET College Crest" class="footer-logo-img" style="margin-bottom:0.75rem;" onerror="this.onerror=null; this.src='assets/images/tcet_college-logo.png';">
+            <a href="https://www.tcetmumbai.in/IOT/" target="_blank" rel="noopener noreferrer">
+              <img src="assets/images/tcet_college_logo.png" alt="TCET College Crest" class="footer-logo-img" style="margin-bottom:0.75rem;" onerror="this.onerror=null; this.src='assets/images/tcet_college-logo.png';">
+            </a>
             <h4 style="color:#FFFFFF; font-size:0.9rem; margin-bottom:0.35rem;">TCET Mumbai</h4>
             <p style="font-size:0.8rem; color:#94A3B8; line-height:1.4; margin-bottom:0.75rem;">
               Department of Computer Science & Engineering (Internet of Things)

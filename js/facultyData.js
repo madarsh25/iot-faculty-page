@@ -571,7 +571,7 @@ const facultyData = [
     "basicInfo": {
       "prefix": "Sub Lt.",
       "fullName": "SUNIL KAMLESH KHATRI",
-      "displayTitle": "Sub Lt. SUNIL KAMLESH KHATRI",
+      "displayTitle": "Sub Lt. Sunil Kamlesh Khatri",
       "designation": "Assistant Professor, Associate NCC Officer",
       "department": "BTech Computer Science and Engineering (Internet of Things)",
       "institution": "Thakur College of Engineering & Technology (TCET)",
