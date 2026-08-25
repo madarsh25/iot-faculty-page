@@ -142,18 +142,27 @@ img {
 
 .nav-link {
   color: #CBD5E1;
-  font-weight: 500;
+  font-weight: 600;
   font-size: 0.875rem;
   display: flex;
   align-items: center;
-  gap: 0.4rem;
-  padding: 0.35rem 0.75rem;
+  gap: 0.45rem;
+  padding: 0.4rem 0.85rem;
   border-radius: var(--radius-sm);
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
 }
 
-.nav-link:hover, .nav-link.active {
+.nav-link:hover {
   color: #FFFFFF;
   background: rgba(255, 255, 255, 0.12);
+}
+
+.nav-link.active {
+  color: #FFFFFF;
+  background: rgba(255, 255, 255, 0.18);
+  border-color: var(--accent-gold);
+  box-shadow: var(--shadow-sm);
 }
 
 .nav-btn-back {
@@ -960,6 +969,22 @@ img {
   color: var(--accent-gold);
 }
 
+/* Responsive Base Class */
+.responsive-grid-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+@media (max-width: 1024px) {
+  .hero-title {
+    font-size: 1.75rem;
+  }
+  .dept-stats {
+    gap: 1.5rem;
+  }
+}
+
 @media (max-width: 950px) {
   .landing-split-layout {
     grid-template-columns: 1fr;
@@ -976,9 +1001,28 @@ img {
   .sidebar-panel .filter-btn {
     width: auto;
   }
+  .responsive-grid-2col {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 768px) {
+  .header-brand {
+    gap: 0.5rem;
+  }
+  .brand-title-small {
+    font-size: 1rem;
+  }
+  .hero-title {
+    font-size: 1.5rem;
+  }
+  .dept-stats {
+    flex-wrap: wrap;
+    gap: 1.5rem;
+  }
+  .stat-item {
+    flex: 1 1 40%;
+  }
   .faculty-modern-grid {
     grid-template-columns: 1fr;
   }
@@ -989,9 +1033,65 @@ img {
   .portfolio-avatar-large {
     margin: 0 auto;
   }
+  .portfolio-hero-actions {
+    justify-content: center;
+  }
   .footer-grid-layout {
     grid-template-columns: 1fr;
     gap: 1.5rem;
+  }
+  .toolbar-card {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .search-box {
+    max-width: 100%;
+  }
+  .card-actions-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 576px) {
+  .tcet-header .header-inner {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+  .header-brand {
+    justify-content: center;
+  }
+  .header-nav {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .brand-title-small {
+    font-size: 0.9rem;
+  }
+  .hero-badge {
+    font-size: 0.7rem;
+  }
+  .dept-stats {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+    text-align: center;
+  }
+  .stat-item {
+    flex: 1 1 100%;
+  }
+  .portfolio-hero-info h1 {
+    font-size: 1.5rem;
+  }
+  .subpage-title {
+    font-size: 1.2rem;
+  }
+  .portfolio-tab-list {
+    padding: 0.5rem 0;
+  }
+  .tab-btn {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
   }
 }
 
