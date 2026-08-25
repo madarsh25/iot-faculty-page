@@ -43,19 +43,51 @@ document.addEventListener('DOMContentLoaded', () => {
      ========================================================================== */
   function parseExperienceYears(str) {
     if (!str || str === '-' || str.toLowerCase() === 'nil' || str.toLowerCase() === 'none') return 0;
-    const yearsMatch = str.match(/(\d+(?:\.\d+)?)\s*year/i);
-    const monthsMatch = str.match(/(\d+)\s*month/i);
+    const strClean = str.toString().trim();
+    const yearsMatch = strClean.match(/(\d+(?:\.\d+)?)\s*(?:years?|yrs?)/i);
+    const monthsMatch = strClean.match(/(\d+)\s*(?:months?|mos?)/i);
     let years = 0;
     if (yearsMatch) {
       years = parseFloat(yearsMatch[1]);
     } else {
-      const numMatch = str.match(/^(\d+(?:\.\d+)?)$/);
+      const numMatch = strClean.match(/^(\d+(?:\.\d+)?)$/);
       if (numMatch) years = parseFloat(numMatch[1]);
     }
     if (monthsMatch) {
       years += parseInt(monthsMatch[1]) / 12;
     }
     return years;
+  }
+
+  function parseDate(dateStr) {
+    if (!dateStr || dateStr === '-' || dateStr.toLowerCase() === 'nil') return null;
+    const clean = dateStr.replace(/(\d+)(?:st|nd|rd|th)/gi, '$1').trim();
+    
+    if (clean.includes('/')) {
+      const parts = clean.split('/');
+      let day = parseInt(parts[0]);
+      let month = parseInt(parts[1]) - 1;
+      let year = parseInt(parts[2]);
+      if (year < 100) year += 2000;
+      if (year < 1990) year += 100;
+      return new Date(year, month, day);
+    } else if (clean.includes('-')) {
+      const parts = clean.split('-');
+      let day = parseInt(parts[0]);
+      let month = parseInt(parts[1]) - 1;
+      let year = parseInt(parts[2]);
+      if (year < 100) year += 2000;
+      if (year < 1990) year += 100;
+      return new Date(year, month, day);
+    }
+    const d = new Date(clean);
+    if (!isNaN(d.getTime())) {
+      if (d.getFullYear() < 1990 && d.getFullYear() > 1900) {
+        d.setFullYear(d.getFullYear() + 100);
+      }
+      return d;
+    }
+    return null;
   }
 
   function getTeachingExperience(f) {
@@ -76,22 +108,28 @@ document.addEventListener('DOMContentLoaded', () => {
       return 0;
     }
     
-    let joinDate;
-    if (dateStr.includes('/')) {
-      const parts = dateStr.split('/');
-      joinDate = new Date(parts[2], parts[1] - 1, parts[0]);
-    } else if (dateStr.includes('-')) {
-      const parts = dateStr.split('-');
-      joinDate = new Date(parts[2], parts[1] - 1, parts[0]);
-    } else if (dateStr.match(/^\d{4}$/)) {
-      joinDate = new Date(dateStr, 0, 1);
-    } else {
-      joinDate = new Date(dateStr);
+    const joinDate = parseDate(dateStr);
+    if (!joinDate || isNaN(joinDate.getTime())) {
+      if (f.metadata.rankCategory === "Support Staff") {
+        return parseExperienceYears(f.experience.total);
+      }
+      return 0;
     }
 
-    if (isNaN(joinDate.getTime())) return 0;
+    const currentDate = new Date(2026, 7, 25); // August 25, 2026
+    const diffMs = currentDate - joinDate;
+    const diffYears = diffMs / (1000 * 60 * 60 * 24 * 365.25);
+    return Math.max(0, parseFloat(diffYears.toFixed(2)));
+  }
 
-    const currentDate = new Date(2026, 7, 24); // August 24, 2026
+  function getIoTExperience(f) {
+    let dateStr = f.experience.dojIoT;
+    if (!dateStr || dateStr === '-') return 0;
+    
+    const joinDate = parseDate(dateStr);
+    if (!joinDate || isNaN(joinDate.getTime())) return 0;
+
+    const currentDate = new Date(2026, 7, 25); // August 25, 2026
     const diffMs = currentDate - joinDate;
     const diffYears = diffMs / (1000 * 60 * 60 * 24 * 365.25);
     return Math.max(0, parseFloat(diffYears.toFixed(2)));
@@ -122,22 +160,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const teachingList = currentList.map(f => getTeachingExperience(f)).filter(exp => exp > 0);
     const industryList = currentList.map(f => getIndustryExperience(f)).filter(exp => exp > 0);
     const tcetList = currentList.map(f => getTCETExperience(f)).filter(exp => exp > 0);
+    const iotList = currentList.map(f => getIoTExperience(f)).filter(exp => exp > 0);
 
     const stats = {
       teaching: {
         max: teachingList.length ? Math.max(...teachingList) : 0,
-        min: teachingList.length ? Math.min(...teachingList) : 0,
-        median: getMedian(teachingList)
+        min: teachingList.length ? Math.min(...teachingList) : 0
       },
       industry: {
         max: industryList.length ? Math.max(...industryList) : 0,
-        min: industryList.length ? Math.min(...industryList) : 0,
-        median: getMedian(industryList)
+        min: industryList.length ? Math.min(...industryList) : 0
       },
       tcet: {
         max: tcetList.length ? Math.max(...tcetList) : 0,
-        min: tcetList.length ? Math.min(...tcetList) : 0,
-        median: getMedian(tcetList)
+        min: tcetList.length ? Math.min(...tcetList) : 0
+      },
+      iot: {
+        max: iotList.length ? Math.max(...iotList) : 0,
+        min: iotList.length ? Math.min(...iotList) : 0
       }
     };
 
@@ -196,7 +236,7 @@ document.addEventListener('DOMContentLoaded', () => {
               </div>
             ` : `
               <div class="stat-item">
-                <h4>5 Labs</h4>
+                <h4>4 Labs</h4>
                 <p>IoT Laboratories</p>
               </div>
               <div class="stat-item">
@@ -204,7 +244,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <p>Technical Support</p>
               </div>
               <div class="stat-item">
-                <h4>TCET-IoT</h4>
+                <h4>CSE-IoT</h4>
                 <p>Lab Operations</p>
               </div>
             `}
@@ -237,8 +277,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <!-- Redesigned Experience Statistics Insights Dashboard -->
           <div class="sidebar-experience-stats">
             <h3><i class="fa-solid fa-chart-line"></i> Experience Insights</h3>
-            
-            ${isTeaching ? `
+                       ${isTeaching ? `
               <!-- 1. Teaching Experience -->
               <div class="stat-category-card">
                 <h4><i class="fa-solid fa-graduation-cap"></i> Teaching Exp.</h4>
@@ -250,32 +289,24 @@ document.addEventListener('DOMContentLoaded', () => {
                   <span>Minimum:</span>
                   <strong>${stats.teaching.min.toFixed(1)} Yrs</strong>
                 </div>
-                <div class="stat-row median-row">
-                  <span>Median:</span>
-                  <strong>${stats.teaching.median.toFixed(1)} Yrs</strong>
+              </div>
+
+              <!-- 2. Industry Experience -->
+              <div class="stat-category-card">
+                <h4><i class="fa-solid fa-industry"></i> Industry Exp.</h4>
+                <div class="stat-row">
+                  <span>Maximum:</span>
+                  <strong>${stats.industry.max.toFixed(1)} Yrs</strong>
+                </div>
+                <div class="stat-row">
+                  <span>Minimum:</span>
+                  <strong>${stats.industry.min.toFixed(1)} Yrs</strong>
                 </div>
               </div>
             ` : ''}
 
-            <!-- 2. Industry Experience -->
-            <div class="stat-category-card">
-              <h4><i class="fa-solid fa-briefcase"></i> Industry Exp.</h4>
-              <div class="stat-row">
-                <span>Maximum:</span>
-                <strong>${stats.industry.max.toFixed(1)} Yrs</strong>
-              </div>
-              <div class="stat-row">
-                <span>Minimum:</span>
-                <strong>${stats.industry.min.toFixed(1)} Yrs</strong>
-              </div>
-              <div class="stat-row median-row">
-                <span>Median:</span>
-                <strong>${stats.industry.median.toFixed(1)} Yrs</strong>
-              </div>
-            </div>
-
-            <!-- 3. Years in TCET -->
-            <div class="stat-category-card">
+            <!-- 3. TCET Experience -->
+            <div class="stat-category-card highlight-card">
               <h4><i class="fa-solid fa-building-columns"></i> Years in TCET</h4>
               <div class="stat-row">
                 <span>Maximum:</span>
@@ -285,11 +316,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 <span>Minimum:</span>
                 <strong>${stats.tcet.min.toFixed(1)} Yrs</strong>
               </div>
-              <div class="stat-row median-row">
-                <span>Median:</span>
-                <strong>${stats.tcet.median.toFixed(1)} Yrs</strong>
+            </div>
+
+            <!-- 4. IoT Dept Experience -->
+            ${isTeaching ? `
+            <div class="stat-category-card">
+              <h4><i class="fa-solid fa-microchip"></i> Years in TCET (IoT Dept)</h4>
+              <div class="stat-row">
+                <span>Maximum:</span>
+                <strong>${stats.iot.max.toFixed(1)} Yrs</strong>
+              </div>
+              <div class="stat-row">
+                <span>Minimum:</span>
+                <strong>${stats.iot.min.toFixed(1)} Yrs</strong>
               </div>
             </div>
+            ` : ''}
 
           </div>
         </aside>
@@ -411,7 +453,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function createModernFacultyCardHtml(f) {
     const isHod = f.metadata.rankCategory.includes('Head of Department');
-    const qualSummary = f.education && f.education.length > 0 ? f.education.map(e => `${e.degree}${e.specialization && e.specialization !== '-' ? ` (${e.specialization.split(' ')[0]})` : ''}`).join(' • ') : '-';
+    const qualSummary = f.education && f.education.length > 0 
+      ? f.education.map(e => {
+          const deg = (e.degree || '').replace(/,$/, '').trim();
+          let spec = (e.specialization && e.specialization !== '-' && e.specialization.toLowerCase() !== 'engineering') ? ` (${e.specialization})` : '';
+          return `${deg}${spec}`.trim();
+        }).filter(q => q.length > 0).join(' • ') 
+      : '-';
     const specTags = f.specializations ? f.specializations.slice(0, 3) : (f.technicalSkills ? f.technicalSkills.slice(0, 3) : []);
 
     return `
