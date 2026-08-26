@@ -151,7 +151,7 @@ const facultyData = [
       "vidwanId": "399359",
       "vidwanUrl": "https://tcetmumbai.irins.org/profile/399359",
       "orcidUrl": "https://orcid.org/0000-0001-6545-620X",
-      "scopusUrl": "https://www.scopus.com/authid/detail.uri?authorId=57208100412",
+      "scopusUrl": "https://www.scopus.com/pages/authors/57208100412",
       "googleScholarUrl": "https://scholar.google.com/citations?hl=en&authuser=1&user=SSskZq0AAAAJ",
       "researchGateUrl": "https://www.researchgate.net/profile/Sujata-Alegavi?ev=hdr_xprf",
       "linkedinUrl": "https://www.linkedin.com/in/dr-sujata-alegavi-dubal-06510a14/",
